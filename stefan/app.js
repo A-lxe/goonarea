@@ -52,27 +52,57 @@
 		//flatten the parts of speech
 		var sent = [];
 		var pos = [];
-		var sentences = response.data
-		for(var i = 0; i<resonse.data.length; i++){
+		var sentences = response.data[0].result;
+		console.log(sentences);
+		
+		for(var i = 0; i<response.data.length; i++){
 			sent = sentences[i];
-			for(var l = 0; j<sent.length; j++)
+			for(var j = 0; j<sent.length; j++)
 				pos.push(sent[j]);
 		}
+		
+		//Remove the god forsaken periods
+		for(var i = 0; i <pos.length; i++){
+			if(pos[i]=="."){
+				pos.splice(i, 1);
+				i--;
+			}
+				
+		}
+		
+		//filter for just nouns and verbs
+		var acceptableWords = [];
+		for(var i = 0; i<sentWords.length; i++){
+			if(pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
+				acceptableWords.push(sentWords[i]);
+		}
+		
+		//alternate random sampling
+		var numSamples = getRandomInt(1, acceptableWords.length);
+		var begIndex = 0;
+		var sample = [];
+		while(numSamples >0 && begIndex < acceptableWords.length){
+			var randIndex = getRandomInt(begIndex, acceptableWords.length);
+			numSamples--;
+			sample.push(acceptableWords[randIndex]);
+			begIndex = randIndex + 1;
+		}
+		
+		/*
 		//reservoir sample the words:
 		
 		var count = 0;
 		
-		//filter for just nouns and verbs
-		var acceptableWords = [];
-		for(int i = 0; i<sentWords.length; i++){
-			if(words[i].search("NN") || words[i].search("VB"))
-				acceptableWords.push(sentWords[i]);
-		}
+		
+		console.log(acceptableWords.length);
 		//Randomly generate the number of samples
 		var numSamples = getRandomInt(1, acceptableWords.length);
+		console.log(numSamples);
 		var sample = reservoirSample(acceptableWords, numSamples);
 		
-		console.log(response);
+		//console.log(response);
+		*/
+		console.log(sample);
 		
 	    });
 		
@@ -96,13 +126,13 @@ function reservoirSample(array, resSize){
 		return array;
 	
 	//fill the first k values in the reservoir
-	for(int i = 0; i<resSize; i++){
+	for(var i = 0; i<resSize; i++){
 		count++;
 		reservoir.push(array[i]);
 		
 	}
 	
-	for (int i = resSize; i<array.length; i++){
+	for (var i = resSize; i<array.length; i++){
 		count++;
 		var randomNum = getRandomInt(0, count/resSize);
 		if (randomNum == 0){
@@ -111,5 +141,5 @@ function reservoirSample(array, resSize){
 		}
 	}
 	
-	return array;
+	return reservoir;
 }
