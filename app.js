@@ -82,6 +82,7 @@
 
         ctrl.run = function () {
             var text = ctrl.input;
+            text = text + '.';
             text = text.replace(/(?:\r\n|\r|\n)/g, '. ');
             text = text.replace(/[^A-Za-z]+\.|;/g, '.');
             console.log(text);
