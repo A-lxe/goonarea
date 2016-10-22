@@ -130,7 +130,27 @@
         }
 
         function getQueries(sModel) {
-            sModel.imageQueries = sModel.tokens;
+            
+			var words = sModel.tokens;
+			var pos = sModel.parse;
+			var acceptableQueries = [];
+			
+			for(var i = 0; i<words.length; i++){
+			if(pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
+				acceptableQueries.push(words[i]);
+			}
+			
+			var numSamples = getRandomInt(1, acceptableQueries.length);
+			var begIndex = 0;
+			var sample = [];
+			while(numSamples >0 && begIndex < acceptableQueries.length){
+				var randIndex = getRandomInt(begIndex, acceptableQueries.length);
+				numSamples--;
+				sample.push(acceptableQueries[randIndex]);
+				begIndex = randIndex + 1;
+			}
+			
+			sModel.imageQueries = sample;
         }
 
         function getImages(sModel) {
@@ -146,5 +166,13 @@
                 });
             }
         }
+		
+		// Returns a random integer between min (included) and max (excluded)
+		// Using Math.round() will give you a non-uniform distribution!
+		function getRandomInt(min, max) {
+			min = Math.ceil(min);
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
     }
 })();
