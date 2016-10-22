@@ -123,6 +123,7 @@
                     "text": text
                 }
             }).then(function (response) {
+                console.log(response);
                 for(var s = 0; s < response.data[0].result.length; s++) {
                     var parse = response.data[0].result[s];
                     var sModel = sModels[s];
@@ -167,6 +168,7 @@
                     var wordIndex = words.indexOf(acceptableQueries[i]);
                     if (wordIndex >= 1 && pos[wordIndex - 1].search("JJ") >= 0) {
                         acceptableQueries[i] = words[wordIndex - 1] + " " + acceptableQueries[i];
+                        console.log("moo");
                         i++;
                     }
                 }
