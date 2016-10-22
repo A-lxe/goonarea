@@ -95,6 +95,8 @@
             console.log(ctrl.sentenceModels);
         };
 
+        ctrl.makeGIF = createGIF;
+
         function parseStory(text) {
             var sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
             var out = [];
@@ -266,6 +268,39 @@
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function createGIF(){
+            urls = [];
+            for (sent of ctrl.sentenceModels){
+                for (url of sent.images){
+                    urls.push(url);
+                }
+            }
+            encodeGIF(urls);
+            function encodeGIF(links){
+                var encoder = new GIFEncoder();
+                encoder.setRepeat(0);
+                encoder.setDelay(500);
+                encoder.start();
+                for (var i=0;i<links.length;i++){
+                    $http.get(links[i], {responseType:'blob'})
+                        .then(function(results){
+                            var data = results.data;
+                            var blob = new Blob(
+                                [data],
+                                {type: "image/png"}
+                            );
+                            var canvas = document.createElement("canvas");
+                            canvas.width = image.width;
+                            canvas.height = image.height;
+                            canvas.getContext("2d").drawImage(image, 0, 0);
+                            encoder.addFrame(canvas);
+                        });
+                }
+                encoder.finish();
+                document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+            }
         }
 		
 		

@@ -121,7 +121,7 @@
                 encoder.finish();
                 document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
             }
-        };
+        }
         function parseStory(text) {
             var sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
             var out = [];
