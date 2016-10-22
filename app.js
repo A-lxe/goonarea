@@ -85,7 +85,6 @@
             text = text + '.';
             text = text.replace(/(?:\r\n|\r|\n)/g, '. ');
             text = text.replace(/[^A-Za-z]+\.|;/g, '.');
-            console.log(text);
             ctrl.sentenceModels = parseStory(text);
             parse(text, ctrl.sentenceModels).then(
                 function (response) {
@@ -103,7 +102,7 @@
             var out = [];
 
             for (var s = 0; s < sentences.length; s++) {
-                if(sentences[s].charAt(0) == ' ') {
+                if (sentences[s].charAt(0) == ' ') {
                     sentences[s] = sentences[s].substring(1);
                 }
                 var sModel = {
@@ -131,7 +130,7 @@
                     "text": text
                 }
             }).then(function (response) {
-                for(var s = 0; s < response.data[0].result.length; s++) {
+                for (var s = 0; s < response.data[0].result.length; s++) {
                     var parse = response.data[0].result[s];
                     var sModel = sModels[s];
                     for (var i = 0; i < parse.length; i++) {
@@ -152,104 +151,102 @@
         }
 
         function getQueries(sModels) {
-            
-				var queries = [];
-				for(var s = 0; s < sModels.length; s ++) {
-					var sModel = sModels[s];
-					var sentence = sModel.constParse;
-					
-					//Noun phrase parsing
-					var npIndex = 0;
-					var npSentence = sentence; 
-					var inVB = false;
-					while(npSentence.indexOf("(NP")>=0 || npSentence.indexOf("(VP")>= 0){
-						
-						//do parsing for whatever appears first. NP or VP
-						
-						if(npSentence.indexOf("(NP")>=0 && npSentence.indexOf("(VP") == -1){
-							npIndex = npSentence.indexOf("NP")+2;
-							inVB = false;
-						}
-						else if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
-							npIndex = npSentence.indexOf("NP")+2;
-							inVB = false;
-							
-						}
-						else {
-							npIndex = npSentence.indexOf("VP")+2;
-							inVB = true;
-							
-						}
-						var index = npIndex;
-						var phrase = "";
-						var parenCount = 1;
-						//inside the noun/verb phrase
-						while(parenCount > 0){
-							
-							if(npSentence[index] ==")"){
-								parenCount--;
-							
-							}
-							else if(npSentence[index] == "("){
-								parenCount++;
-								if(inVB){
-									
-									if(npSentence.substring(index+1, index+4) == "NP "){
-										parenCount = 0;
-										index--;
-									}
-									else if(npSentence.substring(index+1, index+4) == "NN "){
-										
-										var tempStr = npSentence.substring(index);
-										queries.push(phrase);
-										queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")") ) + " ")
-										phrase = "";
-										parenCount = 0;
-										index--;
-									}
-								}
-							}
-							
-							else if(npSentence[index]== " "){
-								var possiblePhrase = npSentence.substring(index+1, npSentence.substring(index).indexOf(")") + index);
-								
-								//If there are no spaces, this means it must be a word.
-								if(possiblePhrase.indexOf(" ") == -1){
-									phrase += possiblePhrase + " ";
-									
-								}
-							}
-							
-							index++;
-						}
 
-						if(phrase!= ""){
-							if(ctrl.memeMode) {
-								phrase = phrase + "memes";
-							}
-						
-						queries.push(phrase);
-						}
+            var queries = [];
+            for (var s = 0; s < sModels.length; s++) {
+                var sModel = sModels[s];
+                var sentence = sModel.constParse;
 
-						//remove everything before the noun/verb phrase
-						npSentence = npSentence.substring(index);
-						
-					}
-					
-					
-					
-					sModel.imageQueries = queries;
-					
-					queries = [];
-				}
-				
-				
+                //Noun phrase parsing
+                var npIndex = 0;
+                var npSentence = sentence;
+                var inVB = false;
+                while (npSentence.indexOf("(NP") >= 0 || npSentence.indexOf("(VP") >= 0) {
+
+                    //do parsing for whatever appears first. NP or VP
+
+                    if (npSentence.indexOf("(NP") >= 0 && npSentence.indexOf("(VP") == -1) {
+                        npIndex = npSentence.indexOf("NP") + 2;
+                        inVB = false;
+                    }
+                    else if (npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0) {
+                        npIndex = npSentence.indexOf("NP") + 2;
+                        inVB = false;
+
+                    }
+                    else {
+                        npIndex = npSentence.indexOf("VP") + 2;
+                        inVB = true;
+
+                    }
+                    var index = npIndex;
+                    var phrase = "";
+                    var parenCount = 1;
+                    //inside the noun/verb phrase
+                    while (parenCount > 0) {
+
+                        if (npSentence[index] == ")") {
+                            parenCount--;
+
+                        }
+                        else if (npSentence[index] == "(") {
+                            parenCount++;
+                            if (inVB) {
+
+                                if (npSentence.substring(index + 1, index + 4) == "NP ") {
+                                    parenCount = 0;
+                                    index--;
+                                }
+                                else if (npSentence.substring(index + 1, index + 4) == "NN ") {
+
+                                    var tempStr = npSentence.substring(index);
+                                    queries.push(phrase);
+                                    queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")")) + " ")
+                                    phrase = "";
+                                    parenCount = 0;
+                                    index--;
+                                }
+                            }
+                        }
+
+                        else if (npSentence[index] == " ") {
+                            var possiblePhrase = npSentence.substring(index + 1, npSentence.substring(index).indexOf(")") + index);
+
+                            //If there are no spaces, this means it must be a word.
+                            if (possiblePhrase.indexOf(" ") == -1) {
+                                phrase += possiblePhrase + " ";
+
+                            }
+                        }
+
+                        index++;
+                    }
+
+                    if (phrase != "") {
+                        if (ctrl.memeMode) {
+                            phrase = phrase + "memes";
+                        }
+                        queries.push(phrase);
+                    }
+
+                    //remove everything before the noun/verb phrase
+                    npSentence = npSentence.substring(index);
+
+                }
+
+
+                sModel.imageQueries = queries;
+
+                queries = [];
             }
-        
+
+
+        }
+
 
         function getImages(sModels) {
             var promiseArray = [];
-            for(var s = 0; s < sModels.length; s ++) {
+            for (var s = 0; s < sModels.length; s++) {
                 var sModel = sModels[s];
                 for (var i = 0; i < sModel.imageQueries.length; i++) {
                     promiseArray.push(imageRequest(sModel.imageQueries[i]));
@@ -258,8 +255,8 @@
             return $q.all(promiseArray).then(function (responses) {
                 console.log(responses);
                 var t = 0;
-                for(var s = 0; s < sModels.length; s ++) {
-                    for(var i = 0; i < sModels[s].imageQueries.length; i ++) {
+                for (var s = 0; s < sModels.length; s++) {
+                    for (var i = 0; i < sModels[s].imageQueries.length; i++) {
                         sModels[s].images[i] = responses[t];
                         t++;
                     }
@@ -276,11 +273,11 @@
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
             }).then(function (response) {
-                if(response.data.value[0]) {
-                    promise.resolve(response.data.value[0].contentUrl);
-                } else {
-                    promise.resolve("");
-                }
+                    if (response.data.value[0]) {
+                        promise.resolve(response.data.value[0].contentUrl);
+                    } else {
+                        promise.resolve("");
+                    }
                 },
                 function (error) {
                     promise.resolve("");
@@ -296,39 +293,51 @@
             return Math.floor(Math.random() * (max - min)) + min;
         }
 
-        function createGIF(){
+        function createGIF() {
             urls = [];
-            for (sent of ctrl.sentenceModels){
-                for (url of sent.images){
+            for (sent of ctrl.sentenceModels) {
+                for (url of sent.images) {
                     urls.push(url);
                 }
             }
             encodeGIF(urls);
-            function encodeGIF(links){
+            function encodeGIF(links) {
                 var encoder = new GIFEncoder();
+                encoder.setSize(300,300);
                 encoder.setRepeat(0);
                 encoder.setDelay(500);
                 encoder.start();
-                for (var i=0;i<links.length;i++){
-                    $http.get(links[i].replace(/http/g, 'https'), {responseType:'blob'})
-                        .then(function(results){
-                            var data = results.data;
-                            var blob = new Blob(
-                                [data],
-                                {type: "image/png"}
-                            );
-                            var canvas = document.createElement("canvas");
-                            canvas.width = image.width;
-                            canvas.height = image.height;
-                            canvas.getContext("2d").drawImage(image, 0, 0);
-                            encoder.addFrame(canvas);
-                        });
+                var imgs = [];
+                for (var i = 0; i < links.length; i++) {
+                    let img = new Image;
+                    img.src = links[i];
+                    img.i = i;
+                    img.onload = function () {
+
+                    };
+                    imgs.push(img);
                 }
-                encoder.finish();
-                document.getElementById('image').src = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+                console.log(imgs);
+                setTimeout(
+                    function () {
+                        var canvas = document.getElementById("canvas");
+                        canvas.width = 300;
+                        canvas.height = 300;
+                        var context = canvas.getContext("2d");
+                        for (var i = 0; i < imgs.length; i++) {
+                            console.log(imgs[i]);
+                            context.drawImage(imgs[i], 0, 0);
+                            console.log(encoder.addFrame(context));
+                        }
+                        encoder.finish();
+                        console.log(encoder);
+                        document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
+                    }, 2000
+                );
+
             }
         }
-		
-		
+
+
     }
 })();
