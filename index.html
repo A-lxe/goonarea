@@ -1,9 +1,10 @@
 <html>
 <head>
-
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body ng-app="App">
+<h1>Goon Area</h1>
 <div ng-controller="MainCtrl as ctrl">
     <div>
         <input ng-model="ctrl.input"></input>
@@ -35,8 +36,8 @@
     <span>{{ctrl.input}}</span>
     <div ng-repeat="sModel in ctrl.sentenceModels">
         <div>{{sModel.text}}</div>
-        <span ng-repeat="img in sModel.images track by $index">
-            <img ng-src="{{img}}" width="200px">
+        <span ng-repeat="img in sModel.images">
+            <img ng-src="{{img}}">
         </span>
     </div>
 </div>
