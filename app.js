@@ -262,6 +262,8 @@
                 url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1',
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
+					'aspect': 'Square'
+					'size': 'Medium'
                 }
             }).then(function (response) {
                     if (response.data.value[0]) {
