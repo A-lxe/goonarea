@@ -13,7 +13,10 @@
             <textarea name="myTextBox" cols="50" rows="10" style="background-color:#FCF5D8;color:#AD8C08;"
                       ng-model="ctrl.input" placeholder="Tell me a story..."></textarea>
             <br/>
-            <button ng-click="ctrl.run()">Submit</button>
+            <div>
+                <input id="memeMode" ng-model="ctrl.memeMode" type="checkbox"><label for="memeMode">Meme Mode</label>
+                <button ng-click="ctrl.run()">Submit</button>
+            </div>
         </div>
         <!--    <span>{{ctrl.input}}</span>-->
         <div ng-repeat="sModel in ctrl.sentenceModels">
