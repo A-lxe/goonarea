@@ -1,10 +1,16 @@
 h1 {
 	font-family:Helvetica;
-	font-size:50px;
+	font-size:80px;
 
+}
+html {
+	display: table;
+	margin: auto;
 }
 body{
 	background-color: lightblue;
-	width: 500px;
+	width: 100%;
 	margin: auto;
+	padding: 50px;
+	vertical-align: middle;
 }
