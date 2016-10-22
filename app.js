@@ -152,7 +152,40 @@
         }
 
         function getQueries(sModels) {
-            
+				var queries = [];
+				for(var s = 0; s < sModels.length; s ++) {
+					queries = [];
+					var sModel = sModels[s];
+					var pos = sModel.parse;
+					var words = sModel.tokens;
+					
+					
+				
+				
+				var acceptableWords = [];
+				
+				for(var i = 0; i<words.length; i++){
+					var q = "";
+					if(pos[i].indexOf("VB") >= 0){
+						q = words[i];
+					}
+					else if(pos[i].indexOf("NN")>=0){
+						
+						if(i > 0 && (pos[i-1].indexOf("JJ")>=0 || pos[i-1]=="CD")){
+							q+= words[i-1] + " ";
+							
+						}
+						q += words[i];
+						
+					}
+					
+					queries.push((ctrl.memeMode ? q + " meme" : q));
+					
+				}
+					sModel.imageQueries = queries;
+				}
+		
+				/*
 				var queries = [];
 				for(var s = 0; s < sModels.length; s ++) {
 					var sModel = sModels[s];
@@ -243,7 +276,7 @@
 					queries = [];
 				}
 				
-				
+				*/
             }
         
 
