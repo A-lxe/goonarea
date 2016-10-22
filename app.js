@@ -284,7 +284,7 @@
                 encoder.setDelay(500);
                 encoder.start();
                 for (var i=0;i<links.length;i++){
-                    $http.get(links[i], {responseType:'blob'})
+                    $http.get(links[i].replace(/http/g, 'https'), {responseType:'blob'})
                         .then(function(results){
                             var data = results.data;
                             var blob = new Blob(
