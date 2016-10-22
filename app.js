@@ -165,8 +165,9 @@
                 // }
                 for (var i = 0; i < acceptableQueries.length; i++) {
                     var wordIndex = words.indexOf(acceptableQueries[i]);
-                    if (wordIndex >= 1 && pos[wordIndex - 1].search("JJ") >= 0) {
+                    if (wordIndex >= 1 && (pos[wordIndex - 1].search("JJ") >= 0) || pos[wordIndex-1].search("CD") >= 0) {
                         acceptableQueries[i] = words[wordIndex - 1] + " " + acceptableQueries[i];
+						console.
                         i++;
                     }
                 }
