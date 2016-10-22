@@ -1,0 +1,10 @@
+h1 {
+	font-family:Helvetica;
+	font-size:50px;
+
+}
+body{
+	background-color: lightblue;
+	width: 500px;
+	margin: auto;
+}
