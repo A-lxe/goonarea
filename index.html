@@ -4,12 +4,21 @@
 </head>
 
 <body ng-app="App">
+<div id="fb-root"></div>
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 <div class="content">
     <h1>StoReel</h1>
 
     <img id="image">
     <div ng-controller="StoryCtrl as ctrl">
-        <!--<input title="Input" ng-model="ctrl.input">-->
         <div class="center">
             <textarea name="myTextBox" cols="50" rows="10" style="background-color:#FCF5D8;color:#663300;"
                       ng-model="ctrl.input" placeholder="Tell me a story..."></textarea>
@@ -18,10 +27,9 @@
                 <input id="memeMode" ng-model="ctrl.memeMode" type="checkbox"><label for="memeMode">Meme Mode</label>
                 <button ng-click="ctrl.run()">Submit</button>
                 <button ng-click="ctrl.makeGIF()">Make Gif</button>
+                        <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share on Facebook</a></div>        <div ng-repeat="sModel in ctrl.sentenceModels">            
             </div>
         </div>
-        <!--    <span>{{ctrl.input}}</span>-->
-        <div ng-repeat="sModel in ctrl.sentenceModels">
             <div>{{sModel.text}}</div>
             <span ng-repeat="img in sModel.images">
                 <img ng-src="{{img}}" width="200px">
