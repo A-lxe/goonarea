@@ -106,7 +106,8 @@
 		for(var i = 0; i<sample.length; i++){
 				var wordIndex = sentWords.indexOf(sample[i]);
 				if(wordIndex >= 1 && pos[wordIndex-1].search("JJ")>=0){
-					sample.splice(i, 0, sentWords[wordIndex-1]);
+					sample[i] = sentWords[wordIndex-1] + " " + sample[i];
+					
 					
 					i++;
 				}
