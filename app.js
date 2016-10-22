@@ -1,6 +1,6 @@
 (function () {
     angular.module('App', ['ngRoute'])
-        .config(function($routeProvider) {
+        .config(function ($routeProvider) {
             $routeProvider
                 .when('/:text', {
                     templateUrl: "app.html",
@@ -18,7 +18,7 @@
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
 
-        if($routeParams.text) {
+        if ($routeParams.text) {
             console.log($routeParams.text)
             ctrl.input = $routeParams.text;
             ctrl.run();
@@ -101,11 +101,10 @@
                             parse.splice(i, 1);
                         }
                     }
-                    sModel.parse = parse;
-                    sModel.constParse = response.data[1].result[s];
                 }
             });
         }
+
 
         function getQueries(sModels) {
             var queries = [];
@@ -133,7 +132,8 @@
 
                     }
 
-                    queries.push((ctrl.memeMode ? q + " meme" : q));
+                    if (q != "")
+                        queries.push((ctrl.memeMode ? q + " meme" : q));
 
                 }
                 sModel.imageQueries = queries;
@@ -231,6 +231,8 @@
              }
 
              */
+
+
         }
 
         function getImages(sModels) {
