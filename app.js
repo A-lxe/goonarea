@@ -79,6 +79,13 @@
             sw[stopwords[i]] = true;
         }
 
+        ctrl.run = function() {
+            ctrl.sentenceModels = parseStory(ctrl.input);
+            for(var i = 0; i < ctrl.sentenceModels.length; i ++) {
+
+            }
+        };
+
         function parseStory(text) {
             var sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
             var out = [];
@@ -86,19 +93,58 @@
             for(var s = 0; s < sentences.length; s ++) {
                 var sModel = {
                     text: sentences[s],
-                    
+                    tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split()
                 };
-                out.push(sModel);
-                var tokens = text.split();
-                var without_sw = [];
-                for (var i = 0; i < tokens.length; i++) {
-                    if (!sw[words[i]]) {
-                        without_sw.push(words[i]);
+                for(var i = 0; i < sModel.tokens.length; i ++) {
+                    if(sw[sModel.tokens[i]]) {
+                        sModel.tokens[i].splice(i,1);
                     }
                 }
+                out.push(sModel);
             }
             return out;
         }
 
+        function parse(sModel) {
+            return $http({
+                method: 'POST',
+                url: 'https://api.projectoxford.ai/linguistics/v1.0/analyze',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Ocp-Apim-Subscription-Key': 'be825782db9342778ddc2ead7bed20ce'
+                },
+                data: {
+                    "language": "en",
+                    "analyzerIds": ["4fa79af1-f22c-408d-98bb-b7d7aeef7f04", "22a6b758-420f-4745-8a3c-46835a67c0d2"],
+                    "text": sModel.text
+                }
+            }).then(function(response) {
+                var parse = response.data[0].result[0];
+                for(var i = 0; i < parse.length; i ++) {
+                    if(sw[parse[i]]) {
+                        parse.splice(i, 1);
+                    }
+                }
+                sModel.parse = parse;
+            });
+        }
+
+        function getQueries(sModel) {
+            sModel.imageQueries = sModel.tokens;
+        }
+
+        function getImages(sModel) {
+            for(var i = 0; i < sModel.imageQueries.length; i ++) {
+                $http({
+                    method: 'GET',
+                    url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + sModel.imageQueries[i] + '&count=1',
+                    headers: {
+                        'Ocp-Apim-Subscription-Key': 'fbf87f6b84754136a4dfb72943c2f17e'
+                    }
+                }).then(function (response) {
+                    sModel.images[i] = response.data.value[0].contentUrl;
+                });
+            }
+        }
     }
 })();
