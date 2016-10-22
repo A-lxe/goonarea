@@ -26,9 +26,15 @@
             <br/>
             <div>
                 <input id="memeMode" ng-model="ctrl.memeMode" type="checkbox"><label for="memeMode">Meme Mode</label>
+                <input id="advancedMode" ng-model="ctrl.advancedMode" type="checkbox"><label for="advancedMode">Advanced Mode</label>
                 <button ng-click="ctrl.run()">Submit</button>
+                <div ng-repeat="sModel in ctrl.sentenceModels"></div>
                 <button ng-click="ctrl.makeGIF()">Make Gif</button>
-                        <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share on Facebook</a></div>        <div ng-repeat="sModel in ctrl.sentenceModels">            
+                <div><a class="twitter-share-button"href="https://twitter.com/intent/tweet">Share on Twitter</a>                      
+                <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share on Facebook</a></div>
+
+
+
             </div>
         </div>
             <div>{{sModel.text}}</div>
