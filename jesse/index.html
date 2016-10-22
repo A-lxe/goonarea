@@ -1,3 +1,5 @@
+<script src="../jsgif/GIFEncoder.js"></script>
+
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -7,18 +9,13 @@
 <div class="content">
     <h1>StoReel</h1>
 
-    <img id="image">
     <div ng-controller="StoryCtrl as ctrl">
         <!--<input title="Input" ng-model="ctrl.input">-->
         <div class="center">
             <textarea name="myTextBox" cols="50" rows="10" style="background-color:#FCF5D8;color:#AD8C08;"
                       ng-model="ctrl.input" placeholder="Tell me a story..."></textarea>
             <br/>
-            <div>
-                <input id="memeMode" ng-model="ctrl.memeMode" type="checkbox"><label for="memeMode">Meme Mode</label>
-                <button ng-click="ctrl.run()">Submit</button>
-                <button ng-click="ctrl.makeGIF()">Make Gif</button>
-            </div>
+            <button ng-click="ctrl.run()">Submit</button>
         </div>
         <!--    <span>{{ctrl.input}}</span>-->
         <div ng-repeat="sModel in ctrl.sentenceModels">
@@ -30,7 +27,6 @@
     </div>
 </div>
 
-<script src="jsgif/GIFEncoder.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 <script src="app.js"></script>
 </body>
