@@ -186,7 +186,8 @@
 						
 					}
 					
-					queries.push((ctrl.memeMode ? q + " meme" : q));
+					if(q!="")
+						queries.push((ctrl.memeMode ? q + " meme" : q));
 					
 				}
 					sModel.imageQueries = queries;
