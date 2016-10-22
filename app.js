@@ -162,14 +162,22 @@
 					var npSentence = sentence; 
 					var inVB = false;
 					while(npSentence.indexOf("(NP")>=0 || npSentence.indexOf("(VP")>= 0){
+						
 						//do parsing for whatever appears first. NP or VP
-						if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
+						
+						if(npSentence.indexOf("(NP")>=0 && npSentence.indexOf("(VP") == -1){
 							npIndex = npSentence.indexOf("NP")+2;
 							inVB = false;
+						}
+						else if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
+							npIndex = npSentence.indexOf("NP")+2;
+							inVB = false;
+							
 						}
 						else {
 							npIndex = npSentence.indexOf("VP")+2;
 							inVB = true;
+							
 						}
 						var index = npIndex;
 						var phrase = "";
@@ -184,7 +192,17 @@
 							else if(npSentence[index] == "("){
 								parenCount++;
 								if(inVB){
+									
 									if(npSentence.substring(index+1, index+4) == "NP "){
+										parenCount = 0;
+										index--;
+									}
+									else if(npSentence.substring(index+1, index+4) == "NN "){
+										
+										var tempStr = npSentence.substring(index);
+										queries.push(phrase);
+										queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")") ) + " ")
+										phrase = "";
 										parenCount = 0;
 										index--;
 									}
@@ -197,23 +215,30 @@
 								//If there are no spaces, this means it must be a word.
 								if(possiblePhrase.indexOf(" ") == -1){
 									phrase += possiblePhrase + " ";
+									
 								}
 							}
 							
 							index++;
 						}
-						if(ctrl.memeMode) {
-                           phrase = phrase + "memes";
-                        }
+
+						if(phrase!= ""){
+							if(ctrl.memeMode) {
+								phrase = phrase + "memes";
+							}
+						
 						queries.push(phrase);
-						//remove everything before the noun phrase
+						}
+
+						//remove everything before the noun/verb phrase
 						npSentence = npSentence.substring(index);
+						
 					}
 					
 					
 					
 					sModel.imageQueries = queries;
-					console.log(queries);
+					
 					queries = [];
 				}
 				
