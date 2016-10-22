@@ -55,7 +55,7 @@
 		var sentences = response.data[0].result;
 		console.log(sentences);
 		
-		for(var i = 0; i<response.data.length; i++){
+		for(var i = 0; i<sentences.length; i++){
 			sent = sentences[i];
 			for(var j = 0; j<sent.length; j++)
 				pos.push(sent[j]);
@@ -102,6 +102,17 @@
 		
 		//console.log(response);
 		*/
+		
+		for(var i = 0; i<sample.length; i++){
+				var wordIndex = sentWords.indexOf(sample[i]);
+				if(wordIndex >= 1 && pos[wordIndex-1].search("JJ")>=0){
+					sample[i] = sentWords[wordIndex-1] + " " + sample[i];
+					
+					
+					i++;
+				}
+				
+		}
 		console.log(sample);
 		
 	    });

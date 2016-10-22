@@ -142,30 +142,32 @@
             });
         }
 
-        function getQueries(sModels) {
-            for(var s = 0; s < sModels.length; s ++) {
-                var sModel = sModels[s];
-                var words = sModel.tokens;
-                var pos = sModel.parse;
-                var acceptableQueries = [];
-
-                for (var i = 0; i < words.length; i++) {
-                    if (pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
-                        acceptableQueries.push(words[i]);
-                }
-
-                var numSamples = getRandomInt(1, acceptableQueries.length);
-                var begIndex = 0;
-                var sample = [];
-                while (numSamples > 0 && begIndex < acceptableQueries.length) {
-                    var randIndex = getRandomInt(begIndex, acceptableQueries.length);
-                    numSamples--;
-                    sample.push(acceptableQueries[randIndex]);
-                    begIndex = randIndex + 1;
-                }
-
-                sModel.imageQueries = sample;
-            }
+        function getQueries(sModel) {
+            
+			var words = sModel.tokens;
+			var pos = sModel.parse;
+			var acceptableQueries = [];
+			
+			for(var i = 0; i<words.length; i++){
+			if(pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
+				acceptableQueries.push(words[i]);
+			}
+			
+			var numSamples = getRandomInt(1, acceptableQueries.length);
+			var begIndex = 0;
+			var sample = [];
+			while(numSamples >0 && begIndex < acceptableQueries.length){
+				var randIndex = getRandomInt(begIndex, acceptableQueries.length);
+				numSamples--;
+				sample.push(acceptableQueries[randIndex]);
+				begIndex = randIndex + 1;
+			}
+			for(var i = 0; i<sample.length; i++){
+				var wordIndex = words.find(sample[i]);
+				if(i >= 1 && pos[i-1].search("JJ")>=0)
+					sample.splice(i, 0, words[i-1]);
+			}
+			sModel.imageQueries = sample;
         }
 
         function getImages(sModels) {
@@ -173,35 +175,36 @@
             for(var s = 0; s < sModels.length; s ++) {
                 var sModel = sModels[s];
                 for (var i = 0; i < sModel.imageQueries.length; i++) {
-                    var promise = $q.defer();
-                    $http({
-                        method: 'GET',
-                        url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + sModel.imageQueries[i] + '&count=1',
-                        headers: {
-                            'Ocp-Apim-Subscription-Key': 'fbf87f6b84754136a4dfb72943c2f17e'
-                        }
-                    }).then(function (response) {
-                        console.log(response.data.value[0].contentUrl);
-                        promise.resolve(response);
-                    },
-                    function (error) {
-                        error.data = {value: [
-                            {contentUrl: ""}
-                        ]};
-                        promise.resolve(error);
-                    });
-                    promiseArray.push(promise);
+                    promiseArray.push(imageRequest(sModel.imageQueries[i]));
                 }
             }
             return $q.all(promiseArray).then(function (responses) {
+                console.log(responses);
                 var t = 0;
                 for(var s = 0; s < sModels.length; s ++) {
                     for(var i = 0; i < sModels[s].imageQueries.length; i ++) {
-                        sModels[s].images[i] = responses[t].data.value[0].contentUrl;
+                        sModels[s].images[i] = responses[t].promise.$$state.value;
                         t++;
                     }
                 }
             });
+        }
+
+        function imageRequest(query) {
+            var promise = $q.defer();
+            $http({
+                method: 'GET',
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1',
+                headers: {
+                    'Ocp-Apim-Subscription-Key': 'fbf87f6b84754136a4dfb72943c2f17e'
+                }
+            }).then(function (response) {
+                    promise.resolve(response.data.value[0].contentUrl);
+                },
+                function (error) {
+                    promise.resolve("");
+                });
+            return promise;
         }
 
         // Returns a random integer between min (included) and max (excluded)

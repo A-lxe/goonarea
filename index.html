@@ -5,30 +5,6 @@
 
 <body ng-app="App">
 <h1>Goon Area</h1>
-<div ng-controller="MainCtrl as ctrl">
-    <div>
-        <input ng-model="ctrl.input"></input>
-        <div ng-model="ctrl.input"></div>
-        <button ng-click="ctrl.makeEntityRequest()">Submit</button>
-        <div ng-repeat="entity in ctrl.test">{{entity.name}}</div>
-    </div>
-
-    <div>
-        <input ng-model="ctrl.input2"></input>
-        <div ng-model="ctrl.input2"></div>
-        <button ng-click="ctrl.makeParseRequest()">Submit</button>
-        <div ng-repeat="entity in ctrl.test2">{{entity.name}}</div>
-    </div>
-
-    <div>
-        <input ng-model="ctrl.imageInput"></input>
-        <div ng-model="ctrl.imageInput"></div>
-        <button ng-click="ctrl.makeImageRequest()">Submit</button>
-        <div ng-repeat="img in ctrl.images" style="display:inline-block">
-            <img ng-src="{{img}}" width="100px">
-        </div>
-    </div>
-</div>
 
 <div ng-controller="StoryCtrl as ctrl">
     <input title="Input" ng-model="ctrl.input">
