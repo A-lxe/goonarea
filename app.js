@@ -1,7 +1,7 @@
 (function () {
     angular.module('App', [])
         .controller('MainCtrl', ['$scope', '$http', MainCtrl])
-        .controller('StoryCtrl', ['$scope', '$http', StoryCtrl]);
+        .controller('StoryCtrl', ['$scope', '$http', '$q', StoryCtrl]);
 
     function MainCtrl($scope, $http) {
         var ctrl = this;
@@ -68,7 +68,7 @@
         }
     }
 
-    function StoryCtrl($scope, $http) {
+    function StoryCtrl($scope, $http, $q) {
         var ctrl = this;
         ctrl.input = "";
         ctrl.sentenceModels = [];
@@ -79,41 +79,37 @@
             sw[stopwords[i]] = true;
         }
 
-        ctrl.run = function() {
+        ctrl.run = function () {
             ctrl.sentenceModels = parseStory(ctrl.input);
-            for(var i = 0; i < ctrl.sentenceModels.length; i ++) {
-                var sModel = ctrl.sentenceModels[i];
-                console.log(ctrl.sentenceModels);
-                parse(ctrl.sentenceModels[i]).then(
-                    function(response) {
-                        console.log(ctrl.sentenceModels);
-                        getQueries(sModel);
-                        getImages(sModel);
-                    }
-                )
-            }
+            console.log(ctrl.sentenceModels);
+            parse(ctrl.input, ctrl.sentenceModels).then(
+                function (response) {
+                    getQueries(ctrl.sentenceModels);
+                    getImages(ctrl.sentenceModels);
+                }
+            )
         };
 
         function parseStory(text) {
             var sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
             var out = [];
 
-            for(var s = 0; s < sentences.length; s ++) {
+            for (var s = 0; s < sentences.length; s++) {
+                if(sentences[s].charAt(0) == ' ') {
+                    sentences[s] = sentences[s].substring(1);
+                }
                 var sModel = {
                     text: sentences[s],
-                    tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(' ')
+                    tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(' '),
+                    parse: [],
+                    images: []
                 };
-                for(var i = 0; i < sModel.tokens.length; i ++) {
-                    if(sw[sModel.tokens[i]]) {
-                        sModel.tokens.splice(i,1);
-                    }
-                }
                 out.push(sModel);
             }
             return out;
         }
 
-        function parse(sModel) {
+        function parse(text, sModels) {
             return $http({
                 method: 'POST',
                 url: 'https://api.projectoxford.ai/linguistics/v1.0/analyze',
@@ -124,63 +120,96 @@
                 data: {
                     "language": "en",
                     "analyzerIds": ["4fa79af1-f22c-408d-98bb-b7d7aeef7f04", "22a6b758-420f-4745-8a3c-46835a67c0d2"],
-                    "text": sModel.text
+                    "text": text
                 }
-            }).then(function(response) {
-                var parse = response.data[0].result[0];
-                for(var i = 0; i < parse.length; i ++) {
-                    if(sw[parse[i]]) {
-                        parse.splice(i, 1);
+            }).then(function (response) {
+                for(var s = 0; s < response.data[0].result.length; s++) {
+                    var parse = response.data[0].result[s];
+                    var sModel = sModels[s];
+                    for (var i = 0; i < parse.length; i++) {
+                        if (sw[parse[i]]) {
+                            parse.splice(i, 1);
+                        }
                     }
+                    for (var i = 0; i < sModel.tokens.length; i++) {
+                        if (sw[sModel.tokens[i]]) {
+                            sModel.tokens.splice(i, 1);
+                            parse.splice(i, 1);
+                        }
+                    }
+                    sModel.parse = parse;
                 }
-                sModel.parse = parse;
             });
         }
 
-        function getQueries(sModel) {
-            
-			var words = sModel.tokens;
-			var pos = sModel.parse;
-			var acceptableQueries = [];
-			
-			for(var i = 0; i<words.length; i++){
-			if(pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
-				acceptableQueries.push(words[i]);
-			}
-			
-			var numSamples = getRandomInt(1, acceptableQueries.length);
-			var begIndex = 0;
-			var sample = [];
-			while(numSamples >0 && begIndex < acceptableQueries.length){
-				var randIndex = getRandomInt(begIndex, acceptableQueries.length);
-				numSamples--;
-				sample.push(acceptableQueries[randIndex]);
-				begIndex = randIndex + 1;
-			}
-			
-			sModel.imageQueries = sample;
-        }
+        function getQueries(sModels) {
+            for(var s = 0; s < sModels.length; s ++) {
+                var sModel = sModels[s];
+                var words = sModel.tokens;
+                var pos = sModel.parse;
+                var acceptableQueries = [];
 
-        function getImages(sModel) {
-            for(var i = 0; i < sModel.imageQueries.length; i ++) {
-                $http({
-                    method: 'GET',
-                    url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + sModel.imageQueries[i] + '&count=1',
-                    headers: {
-                        'Ocp-Apim-Subscription-Key': 'fbf87f6b84754136a4dfb72943c2f17e'
-                    }
-                }).then(function (response) {
-                    sModel.images[i] = response.data.value[0].contentUrl;
-                });
+                for (var i = 0; i < words.length; i++) {
+                    if (pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
+                        acceptableQueries.push(words[i]);
+                }
+
+                var numSamples = getRandomInt(1, acceptableQueries.length);
+                var begIndex = 0;
+                var sample = [];
+                while (numSamples > 0 && begIndex < acceptableQueries.length) {
+                    var randIndex = getRandomInt(begIndex, acceptableQueries.length);
+                    numSamples--;
+                    sample.push(acceptableQueries[randIndex]);
+                    begIndex = randIndex + 1;
+                }
+
+                sModel.imageQueries = sample;
             }
         }
-		
-		// Returns a random integer between min (included) and max (excluded)
-		// Using Math.round() will give you a non-uniform distribution!
-		function getRandomInt(min, max) {
-			min = Math.ceil(min);
-			max = Math.floor(max);
-			return Math.floor(Math.random() * (max - min)) + min;
-		}
+
+        function getImages(sModels) {
+            var promiseArray = [];
+            for(var s = 0; s < sModels.length; s ++) {
+                var sModel = sModels[s];
+                for (var i = 0; i < sModel.imageQueries.length; i++) {
+                    var promise = $q.defer();
+                    $http({
+                        method: 'GET',
+                        url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + sModel.imageQueries[i] + '&count=1',
+                        headers: {
+                            'Ocp-Apim-Subscription-Key': 'fbf87f6b84754136a4dfb72943c2f17e'
+                        }
+                    }).then(function (response) {
+                        console.log(response.data.value[0].contentUrl);
+                        promise.resolve(response);
+                    },
+                    function (error) {
+                        error.data = {value: [
+                            {contentUrl: ""}
+                        ]};
+                        promise.resolve(error);
+                    });
+                    promiseArray.push(promise);
+                }
+            }
+            return $q.all(promiseArray).then(function (responses) {
+                var t = 0;
+                for(var s = 0; s < sModels.length; s ++) {
+                    for(var i = 0; i < sModels[s].imageQueries.length; i ++) {
+                        sModels[s].images[i] = responses[t].data.value[0].contentUrl;
+                        t++;
+                    }
+                }
+            });
+        }
+
+        // Returns a random integer between min (included) and max (excluded)
+        // Using Math.round() will give you a non-uniform distribution!
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
     }
 })();
