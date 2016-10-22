@@ -8,6 +8,7 @@
     <h1>StoReel</h1>
 
     <img id="image">
+    <canvas id="canvas"></canvas>
     <div ng-controller="StoryCtrl as ctrl">
         <!--<input title="Input" ng-model="ctrl.input">-->
         <div class="center">
@@ -31,7 +32,9 @@
 </div>
 
 <script src="jsgif/b64.js"></script>
-<script src="jsgif/GIFEncoder.js"></script>
+<script type="text/javascript" src="jsgif/LZWEncoder.js"></script>
+<script type="text/javascript" src="jsgif/NeuQuant.js"></script>
+<script type="text/javascript" src="jsgif/GIFEncoder.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 <script src="app.js"></script>
 </body>
