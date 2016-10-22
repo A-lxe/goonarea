@@ -85,12 +85,9 @@
                     "text": text
                 }
             }).then(function (response) {
-                console.log(response);
                 for (var s = 0; s < response.data[0].result.length; s++) {
                     let parse = response.data[0].result[s];
-                    console.log(parse);
                     let sModel = sModels[s];
-                    console.log(sModel);
                     for (var i = 0; i < parse.length; i++) {
                         if (sw[parse[i]]) {
                             parse.splice(i, 1);
@@ -311,38 +308,21 @@
                     imgs.push(img);
                 }
                 console.log(imgs);
-                var npSentence = sentence;
-                var inVB = false;
-                while (npSentence.indexOf("(NP") >= 0 || npSentence.indexOf("(VP") >= 0) {
-
-                    //do parsing for whatever appears first. NP or VP
-
-                    if (npSentence.indexOf("(NP") >= 0 && npSentence.indexOf("(VP") == -1) {
-                        npIndex = npSentence.indexOf("NP") + 2;
-                        inVB = false;
-                    }
-                    else if (npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0) {
-                        npIndex = npSentence.indexOf("NP") + 2;
-
-                        setTimeout(
-                            function () {
-                                var canvas = document.getElementById("canvas");
-                                canvas.width = 300;
-                                canvas.height = 300;
-                                var context = canvas.getContext("2d");
-                                for (var i = 0; i < imgs.length; i++) {
-                                    console.log(imgs[i]);
-                                    context.drawImage(imgs[i], 0, 0);
-                                    console.log(encoder.addFrame(context));
-                                }
-                                encoder.finish();
-                                console.log(encoder);
-                                document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
-                            }, 2000
-                        );
-
-                    }
-                }
+                setTimeout(
+                    function () {
+                        var canvas = document.getElementById("canvas");
+                        canvas.width = 300;
+                        canvas.height = 300;
+                        var context = canvas.getContext("2d");
+                        for (var i = 0; i < imgs.length; i++) {
+                            console.log(imgs[i]);
+                            context.drawImage(imgs[i], 0, 0);
+                            console.log(encoder.addFrame(context));
+                        }
+                        encoder.finish();
+                        console.log(encoder.stream().getData());
+                        document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
+                    }, 2000);
             }
         }
     }
