@@ -42,7 +42,7 @@
 		data: {
 		    "language" : "en",
 		    "analyzerIds" : ["4fa79af1-f22c-408d-98bb-b7d7aeef7f04", "22a6b758-420f-4745-8a3c-46835a67c0d2"],
-		    "text" : "Hi, Tom! How are you today?" 
+		    "text" : ctrl.input2
 		}
 	    }).then(function(response) {
 		console.log(response);
