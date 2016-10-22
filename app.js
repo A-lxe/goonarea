@@ -142,32 +142,36 @@
             });
         }
 
-        function getQueries(sModel) {
-            
-			var words = sModel.tokens;
-			var pos = sModel.parse;
-			var acceptableQueries = [];
-			
-			for(var i = 0; i<words.length; i++){
-			if(pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
-				acceptableQueries.push(words[i]);
-			}
-			
-			var numSamples = getRandomInt(1, acceptableQueries.length);
-			var begIndex = 0;
-			var sample = [];
-			while(numSamples >0 && begIndex < acceptableQueries.length){
-				var randIndex = getRandomInt(begIndex, acceptableQueries.length);
-				numSamples--;
-				sample.push(acceptableQueries[randIndex]);
-				begIndex = randIndex + 1;
-			}
-			for(var i = 0; i<sample.length; i++){
-				var wordIndex = words.find(sample[i]);
-				if(i >= 1 && pos[i-1].search("JJ")>=0)
-					sample.splice(i, 0, words[i-1]);
-			}
-			sModel.imageQueries = sample;
+        function getQueries(sModels) {
+            for(var s = 0; s < sModels.length; s ++) {
+                var sModel = sModels[s];
+                var words = sModel.tokens;
+                var pos = sModel.parse;
+                var acceptableQueries = [];
+
+                for (var i = 0; i < words.length; i++) {
+                    if (pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
+                        acceptableQueries.push(words[i]);
+                }
+
+                // var numSamples = getRandomInt(1, acceptableQueries.length);
+                // var begIndex = 0;
+                // var sample = [];
+                // while (numSamples > 0 && begIndex < acceptableQueries.length) {
+                //     var randIndex = getRandomInt(begIndex, acceptableQueries.length);
+                //     numSamples--;
+                //     sample.push(acceptableQueries[randIndex]);
+                //     begIndex = randIndex + 1;
+                // }
+                for (var i = 0; i < acceptableQueries.length; i++) {
+                    var wordIndex = words.indexOf(acceptableQueries[i]);
+                    if (wordIndex >= 1 && pos[wordIndex - 1].search("JJ") >= 0) {
+                        acceptableQueries[i] = words[wordIndex - 1] + " " + acceptableQueries[i];
+                        i++;
+                    }
+                }
+                sModel.imageQueries = acceptableQueries;
+            }
         }
 
         function getImages(sModels) {
@@ -183,7 +187,7 @@
                 var t = 0;
                 for(var s = 0; s < sModels.length; s ++) {
                     for(var i = 0; i < sModels[s].imageQueries.length; i ++) {
-                        sModels[s].images[i] = responses[t].promise.$$state.value;
+                        sModels[s].images[i] = responses[t];
                         t++;
                     }
                 }
@@ -204,7 +208,7 @@
                 function (error) {
                     promise.resolve("");
                 });
-            return promise;
+            return promise.promise;
         }
 
         // Returns a random integer between min (included) and max (excluded)
