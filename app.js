@@ -139,6 +139,7 @@
                         }
                     }
                     sModel.parse = parse;
+                    sModel.constParse = response.data[1].result[s];
                 }
             });
         }
@@ -168,11 +169,6 @@
                     var wordIndex = words.indexOf(acceptableQueries[i]);
                     if (wordIndex >= 1 && (pos[wordIndex - 1].search("JJ") >= 0) || pos[wordIndex-1].search("CD") >= 0) {
                         acceptableQueries[i] = words[wordIndex - 1] + " " + acceptableQueries[i];
-<<<<<<< HEAD
-                        console.log("moo");
-=======
-						console.
->>>>>>> d9b73454ff5876dbb8fd1aeb58af0d6efab8fbaf
                         i++;
                     }
                 }
