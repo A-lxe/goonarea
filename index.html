@@ -3,8 +3,8 @@
 
 </head>
 
-<body>
-<div ng-app="App" ng-controller="MainCtrl as ctrl">
+<body ng-app="App">
+<div ng-controller="MainCtrl as ctrl">
     <div>
         <input ng-model="ctrl.input"></input>
         <div ng-model="ctrl.input"></div>
@@ -31,10 +31,11 @@
 
 <div ng-controller="StoryCtrl as ctrl">
     <input title="Input" ng-model="ctrl.input">
-    <button ng-click="ctrl.submit()">Submit</button>
+    <button ng-click="ctrl.run()">Submit</button>
     <span>{{ctrl.input}}</span>
-    <div>
-        <span ng-repeat="img in ctrl.images">
+    <div ng-repeat="sModel in ctrl.sentenceModels">
+        <div>{{sModel.text}}</div>
+        <span ng-repeat="img in sModel.images">
             <img ng-src="{{img}}">
         </span>
     </div>

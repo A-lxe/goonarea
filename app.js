@@ -82,7 +82,15 @@
         ctrl.run = function() {
             ctrl.sentenceModels = parseStory(ctrl.input);
             for(var i = 0; i < ctrl.sentenceModels.length; i ++) {
-
+                var sModel = ctrl.sentenceModels[i];
+                console.log(ctrl.sentenceModels);
+                parse(ctrl.sentenceModels[i]).then(
+                    function(response) {
+                        console.log(ctrl.sentenceModels);
+                        getQueries(sModel);
+                        getImages(sModel);
+                    }
+                )
             }
         };
 
@@ -93,11 +101,11 @@
             for(var s = 0; s < sentences.length; s ++) {
                 var sModel = {
                     text: sentences[s],
-                    tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split()
+                    tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(' ')
                 };
                 for(var i = 0; i < sModel.tokens.length; i ++) {
                     if(sw[sModel.tokens[i]]) {
-                        sModel.tokens[i].splice(i,1);
+                        sModel.tokens.splice(i,1);
                     }
                 }
                 out.push(sModel);
