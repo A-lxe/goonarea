@@ -7,7 +7,11 @@
 <h1>Goon Area</h1>
 
 <div ng-controller="StoryCtrl as ctrl">
-    <input title="Input" ng-model="ctrl.input">
+	<!--<input title="Input" ng-model="ctrl.input">-->
+    <textarea name="myTextBox" cols="50" rows="10" style="background-color:#FCF5D8;color:#AD8C08;" ng-model="ctrl.input">
+	    Enter some text...
+    </textarea>
+    <br />
     <button ng-click="ctrl.run()">Submit</button>
     <span>{{ctrl.input}}</span>
     <div ng-repeat="sModel in ctrl.sentenceModels">
