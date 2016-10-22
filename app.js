@@ -148,36 +148,72 @@
         }
 
         function getQueries(sModels) {
-            for(var s = 0; s < sModels.length; s ++) {
-                var sModel = sModels[s];
-                var words = sModel.tokens;
-                var pos = sModel.parse;
-                var acceptableQueries = [];
-
-                for (var i = 0; i < words.length; i++) {
-                    if (pos[i].search("NN") >= 0 || pos[i].search("VB") >= 0)
-                        acceptableQueries.push(words[i]);
-                }
-
-                // var numSamples = getRandomInt(1, acceptableQueries.length);
-                // var begIndex = 0;
-                // var sample = [];
-                // while (numSamples > 0 && begIndex < acceptableQueries.length) {
-                //     var randIndex = getRandomInt(begIndex, acceptableQueries.length);
-                //     numSamples--;
-                //     sample.push(acceptableQueries[randIndex]);
-                //     begIndex = randIndex + 1;
-                // }
-                for (var i = 0; i < acceptableQueries.length; i++) {
-                    var wordIndex = words.indexOf(acceptableQueries[i]);
-                    if (wordIndex >= 1 && (pos[wordIndex - 1].search("JJ") >= 0) || pos[wordIndex-1].search("CD") >= 0) {
-                        acceptableQueries[i] = words[wordIndex - 1] + " " + acceptableQueries[i];
-                        i++;
-                    }
-                }
-                sModel.imageQueries = acceptableQueries;
+            
+				var queries = [];
+				for(var s = 0; s < sModels.length; s ++) {
+					var sModel = sModels[s];
+					var sentence = sModel.constParse;
+					
+					//Noun phrase parsing
+					var npIndex = 0;
+					var npSentence = sentence; 
+					var inVB = false;
+					while(npSentence.indexOf("(NP")>=0 || npSentence.indexOf("(VP")>= 0){
+						//do parsing for whatever appears first. NP or VP
+						if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
+							npIndex = npSentence.indexOf("NP")+2;
+							inVB = false;
+						}
+						else {
+							npIndex = npSentence.indexOf("VP")+2;
+							inVB = true;
+						}
+						var index = npIndex;
+						var phrase = "";
+						var parenCount = 1;
+						//inside the noun/verb phrase
+						while(parenCount > 0){
+							
+							if(npSentence[index] ==")"){
+								parenCount--;
+							
+							}
+							else if(npSentence[index] == "("){
+								parenCount++;
+								if(inVB){
+									if(npSentence.substring(index+1, index+4) == "NP "){
+										parenCount = 0;
+										index--;
+									}
+								}
+							}
+							
+							else if(npSentence[index]== " "){
+								var possiblePhrase = npSentence.substring(index+1, npSentence.substring(index).indexOf(")") + index);
+								
+								//If there are no spaces, this means it must be a word.
+								if(possiblePhrase.indexOf(" ") == -1){
+									phrase += possiblePhrase + " ";
+								}
+							}
+							
+							index++;
+						}
+						queries.push(phrase);
+						//remove everything before the noun phrase
+						npSentence = npSentence.substring(index);
+					}
+					
+					
+					
+					sModel.imageQueries = queries;
+					console.log(queries);
+					queries = [];
+				}
+				
+				
             }
-        }
+        
 
         function getImages(sModels) {
             var promiseArray = [];
@@ -223,5 +259,7 @@
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min)) + min;
         }
+		
+		
     }
 })();
