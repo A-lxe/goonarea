@@ -46,22 +46,31 @@
 		}
 	    }).then(function(response) {
 		
+		//words
+		var sentWords = ctrl.input2.split(" ");
 		
-		
-		//flatten the data
+		//flatten the parts of speech
 		var sent = [];
-		var words = [];
+		var pos = [];
 		var sentences = response.data
 		for(var i = 0; i<resonse.data.length; i++){
 			sent = sentences[i];
 			for(var l = 0; j<sent.length; j++)
-				words.push(sent[j]);
+				pos.push(sent[j]);
 		}
 		//reservoir sample the words:
-		var numSamples = getRandomInt(1, words.length);
+		
 		var count = 0;
 		
-		
+		//filter for just nouns and verbs
+		var acceptableWords = [];
+		for(int i = 0; i<sentWords.length; i++){
+			if(words[i].search("NN") || words[i].search("VB"))
+				acceptableWords.push(sentWords[i]);
+		}
+		//Randomly generate the number of samples
+		var numSamples = getRandomInt(1, acceptableWords.length);
+		var sample = reservoirSample(acceptableWords, numSamples);
 		
 		console.log(response);
 		
