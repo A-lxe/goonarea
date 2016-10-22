@@ -157,7 +157,11 @@
 				sample.push(acceptableQueries[randIndex]);
 				begIndex = randIndex + 1;
 			}
-			
+			for(var i = 0; i<sample.length; i++){
+				var wordIndex = words.find(sample[i]);
+				if(i >= 1 && pos[i-1].search("JJ")>=0)
+					sample.splice(i, 0, words[i-1]);
+			}
 			sModel.imageQueries = sample;
         }
 
