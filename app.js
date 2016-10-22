@@ -1,289 +1,237 @@
 (function () {
-        angular.module('App', [])
-            .controller('MainCtrl', ['$scope', '$http', MainCtrl])
-            .controller('StoryCtrl', ['$scope', '$http', '$q', StoryCtrl]);
-
-        function MainCtrl($scope, $http) {
-            var ctrl = this;
-            ctrl.test = [];
-            ctrl.input = "";
-
-
-            ctrl.makeEntityRequest = function () {
-                $http({
-                    method: 'POST',
-                    url: 'https://api.projectoxford.ai/entitylinking/v1.0/link',
-                    headers: {
-                        'Content-type': 'text/plain',
-                        'Ocp-Apim-Subscription-Key': '60ce5dfbd38a44ceaadc7750680638ab'
-                    },
-                    data: {
-                        body: ctrl.input
-                    }
-                }).then(function (response) {
-                    for (var i = 0; i < response.data.entities.length; i++) {
-                        ctrl.test.push(response.data.entities[i]);
-                    }
-                    console.log(response);
-                    console.log(ctrl.test);
+    angular.module('App', ['ngRoute'])
+        .config(function($routeProvider) {
+            $routeProvider
+                .when('/:text', {
+                    templateUrl: "app.html",
+                    controller: StoryCtrl,
+                    controllerAs: "ctrl"
                 });
-            }
+        })
+        .controller('StoryCtrl', ['$scope', '$http', '$q', '$routeParams', StoryCtrl]);
 
-            ctrl.test2 = [];
-            ctrl.input2 = "";
-            ctrl.makeParseRequest = function () {
-                $http({
-                    method: 'POST',
-                    url: 'https://api.projectoxford.ai/linguistics/v1.0/analyze',
-                    headers: {
-                        'Content-type': 'application/json',
-                        'Ocp-Apim-Subscription-Key': 'be825782db9342778ddc2ead7bed20ce'
-                    },
-                    data: {
-                        "language": "en",
-                        "analyzerIds": ["4fa79af1-f22c-408d-98bb-b7d7aeef7f04", "22a6b758-420f-4745-8a3c-46835a67c0d2"],
-                        "text": ctrl.input2
-                    }
-                }).then(function (response) {
-                    console.log(response);
-                });
-            }
+    function StoryCtrl($scope, $http, $q, $routeParams) {
+        var ctrl = this;
+        ctrl.input = "";
+        ctrl.sentenceModels = [];
+        ctrl.memeMode = false;
+        ctrl.run = run;
+        ctrl.makeGIF = createGIF;
 
-            ctrl.images = [];
-            ctrl.imageInput = "";
-            ctrl.makeImageRequest = function () {
-                ctrl.images = [];
-                $http({
-                    method: 'GET',
-                    url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + ctrl.imageInput,
-                    headers: {
-                        'Ocp-Apim-Subscription-Key': 'fbf87f6b84754136a4dfb72943c2f17e'
-                    }
-                }).then(function (response) {
-                    for (var i = 0; i < response.data.value.length; i++) {
-                        ctrl.images.push(response.data.value[i].contentUrl);
-                    }
-                    console.log(response);
-                });
-            }
+        if($routeParams.text) {
+            console.log($routeParams.text)
+            ctrl.input = $routeParams.text;
+            ctrl.run();
         }
 
-        function StoryCtrl($scope, $http, $q) {
-            var ctrl = this;
-            ctrl.input = "";
-            ctrl.sentenceModels = [];
-            ctrl.memeMode = false;
+        var stopwords = ["then", "there", "this", "i", "it", "a", "a\'s", "able", "after", "afterwards", "again", "almost", "along", "also", "although", "am", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "around", "as", "aside", "at", "available", "away", "awfully", "b", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "being", "below", "beside", "besides", "better", "both", "but", "by", "c", "c\'s", "cause", "causes", "co", "com", "come", "comes", "concerning", "consequently", "d", "e", "each", "edu", "eg", "especially", "et", "etc", "even", "ever", "every", "everybody", "everyone", "everything", "everywhere", "ex", "f", "far", "for", "forth", "four", "from", "further", "furthermore", "g", "h", "had", "hadn\'t", "has", "hasn\'t", "have", "haven\'t", "having", "he", "he\'s", "her", "herself", "him", "himself", "his", "how", "however", "i\'d", "i\'ll", "i\'m", "i\'ve", "ie", "if", "in", "inasmuch", "inc", "insofar", "instead", "into", "is", "isn\'t", "it", "it\'d", "it\'ll", "it\'s", "its", "itself", "j", "just", "k", "kept", "know", "l", "lately", "later", "let", "let\'s", "ltd", "m", "may", "me", "might", "must", "my", "myself", "n", "namely", "nd", "o", "of", "off", "often", "oh", "ok", "okay", "only", "onto", "or", "other", "others", "otherwise", "ought", "our", "ours", "ourselves", "overall", "own", "p", "per", "perhaps", "placed", "q", "que", "quite", "qv", "r", "rather", "rd", "re", "s", "said", "saw", "secondly", "self", "selves", "she", "since", "six", "so", "some", "somebody", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "sub", "such", "sup", "sure", "t", "t\'s", "th", "than", "that", "that\'s", "thats", "the", "their", "theirs", "them", "themselves", "there", "there\'s", "therefore", "theres", "these", "they", "they\'d", "they\'ll", "they\'re", "they\'ve", "third", "those", "though", "three", "thru", "thus", "to", "too", "took", "twice", "two", "u", "un", "until", "unto", "upon", "us", "use", "used", "uses", "using", "uucp", "v", "was", "wasn\'t", "we", "we\'d", "we\'ll", "we\'re", "we\'ve", "were", "weren\'t", "what", "what\'s", "when", "whence", "whenever", "where", "where\'s", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "who\'s", "whoever", "whole", "whom", "whose", "why", "will", "willing", "with", "within", "without", "won\'t", "would", "wouldn\'t", "x", "y", "you", "you\'d", "you\'ll", "you\'re", "you\'ve", "your", "yours", "yourself", "yourselves", "z", "zero", "\!", "\#", "\$", "\%", "\&", "\'", "\(", "\)", "\*", "\+", "\-", ".", ",", "/", ":", ";", "\<", "=", "\>", "\?", "@", "\[", "\]", "\^", "\_", "\`", "\{", "\|", "\}", "\~"]
+        var sw = {};
+        for (var i = 0; i < stopwords.length; i++) {
+            sw[stopwords[i]] = true;
+        }
+        /* words = []
+         * for (word of words){
+         * 	if (!sw[word]){
+         *		words.push(word)
+         * 	}
+         * }
+         * stripped_sw = words.join(" ")
+         */
 
-            var stopwords = ["then", "there", "this", "i", "it", "a", "a\'s", "able", "after", "afterwards", "again", "almost", "along", "also", "although", "am", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "around", "as", "aside", "at", "available", "away", "awfully", "b", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "being", "below", "beside", "besides", "better", "both", "but", "by", "c", "c\'s", "cause", "causes", "co", "com", "come", "comes", "concerning", "consequently", "d", "e", "each", "edu", "eg", "especially", "et", "etc", "even", "ever", "every", "everybody", "everyone", "everything", "everywhere", "ex", "f", "far", "for", "forth", "four", "from", "further", "furthermore", "g", "h", "had", "hadn\'t", "has", "hasn\'t", "have", "haven\'t", "having", "he", "he\'s", "her", "herself", "him", "himself", "his", "how", "however", "i\'d", "i\'ll", "i\'m", "i\'ve", "ie", "if", "in", "inasmuch", "inc", "insofar", "instead", "into", "is", "isn\'t", "it", "it\'d", "it\'ll", "it\'s", "its", "itself", "j", "just", "k", "kept", "know", "l", "lately", "later", "let", "let\'s", "ltd", "m", "may", "me", "might", "must", "my", "myself", "n", "namely", "nd", "o", "of", "off", "often", "oh", "ok", "okay", "only", "onto", "or", "other", "others", "otherwise", "ought", "our", "ours", "ourselves", "overall", "own", "p", "per", "perhaps", "placed", "q", "que", "quite", "qv", "r", "rather", "rd", "re", "s", "said", "saw", "secondly", "self", "selves", "she", "since", "six", "so", "some", "somebody", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "sub", "such", "sup", "sure", "t", "t\'s", "th", "than", "that", "that\'s", "thats", "the", "their", "theirs", "them", "themselves", "there", "there\'s", "therefore", "theres", "these", "they", "they\'d", "they\'ll", "they\'re", "they\'ve", "third", "those", "though", "three", "thru", "thus", "to", "too", "took", "twice", "two", "u", "un", "until", "unto", "upon", "us", "use", "used", "uses", "using", "uucp", "v", "was", "wasn\'t", "we", "we\'d", "we\'ll", "we\'re", "we\'ve", "were", "weren\'t", "what", "what\'s", "when", "whence", "whenever", "where", "where\'s", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "who\'s", "whoever", "whole", "whom", "whose", "why", "will", "willing", "with", "within", "without", "won\'t", "would", "wouldn\'t", "x", "y", "you", "you\'d", "you\'ll", "you\'re", "you\'ve", "your", "yours", "yourself", "yourselves", "z", "zero", "\!", "\#", "\$", "\%", "\&", "\'", "\(", "\)", "\*", "\+", "\-", ".", ",", "/", ":", ";", "\<", "=", "\>", "\?", "@", "\[", "\]", "\^", "\_", "\`", "\{", "\|", "\}", "\~"]
-            var sw = {};
-            for (var i = 0; i < stopwords.length; i++) {
-                sw[stopwords[i]] = true;
-            }
-            /* words = []
-             * for (word of words){
-             * 	if (!sw[word]){
-             *		words.push(word)
-             * 	}
-             * }
-             * stripped_sw = words.join(" ")
-             */
-            ctrl.run = function () {
-                var text = ctrl.input;
-                text = text + '.';
-                text = text.replace(/(?:\r\n|\r|\n)/g, '. ');
-                text = text.replace(/[^A-Za-z]+\.|;/g, '.');
-                ctrl.sentenceModels = parseStory(text);
-                parse(text, ctrl.sentenceModels).then(
-                    function (response) {
-                        getQueries(ctrl.sentenceModels);
-                        getImages(ctrl.sentenceModels);
-                    }
-                );
-                console.log(ctrl.sentenceModels);
-            };
 
-            ctrl.makeGIF = createGIF;
-
-            function parseStory(text) {
-                var sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
-                var out = [];
-
-                for (var s = 0; s < sentences.length; s++) {
-                    if (sentences[s].charAt(0) == ' ') {
-                        sentences[s] = sentences[s].substring(1);
-                    }
-                    var sModel = {
-                        text: sentences[s],
-                        tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(' '),
-                        parse: [],
-                        images: []
-                    };
-                    out.push(sModel);
+        function run() {
+            var text = ctrl.input;
+            text = text + '.';
+            text = text.replace(/(?:\r\n|\r|\n)/g, '. ');
+            text = text.replace(/[^A-Za-z]+\.|;/g, '.');
+            ctrl.sentenceModels = parseStory(text);
+            parse(text, ctrl.sentenceModels).then(
+                function (response) {
+                    getQueries(ctrl.sentenceModels);
+                    getImages(ctrl.sentenceModels);
                 }
-                return out;
-            }
+            );
+            console.log(ctrl.sentenceModels);
+        }
 
-            function parse(text, sModels) {
-                return $http({
-                    method: 'POST',
-                    url: 'https://api.projectoxford.ai/linguistics/v1.0/analyze',
-                    headers: {
-                        'Content-type': 'application/json',
-                        'Ocp-Apim-Subscription-Key': 'be825782db9342778ddc2ead7bed20ce'
-                    },
-                    data: {
-                        "language": "en",
-                        "analyzerIds": ["4fa79af1-f22c-408d-98bb-b7d7aeef7f04", "22a6b758-420f-4745-8a3c-46835a67c0d2"],
-                        "text": text
-                    }
-                }).then(function (response) {
-                    for (var s = 0; s < response.data[0].result.length; s++) {
-                        var parse = response.data[0].result[s];
-                        var sModel = sModels[s];
-                        for (var i = 0; i < parse.length; i++) {
-                            if (sw[parse[i]]) {
-                                parse.splice(i, 1);
-                            }
-                        }
-                        for (var i = 0; i < sModel.tokens.length; i++) {
-                            if (sw[sModel.tokens[i]]) {
-                                sModel.tokens.splice(i, 1);
-                                parse.splice(i, 1);
-                            }
-                        }
-                        sModel.parse = parse;
-                        sModel.constParse = response.data[1].result[s];
-                    }
-                });
-            }
+        function parseStory(text) {
+            var sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
+            var out = [];
 
-            function getQueries(sModels) {
-                var queries = [];
-                for (var s = 0; s < sModels.length; s++) {
-                    queries = [];
+            for (var s = 0; s < sentences.length; s++) {
+                if (sentences[s].charAt(0) == ' ') {
+                    sentences[s] = sentences[s].substring(1);
+                }
+                var sModel = {
+                    text: sentences[s],
+                    tokens: sentences[s].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(' '),
+                    parse: [],
+                    images: []
+                };
+                out.push(sModel);
+            }
+            return out;
+        }
+
+        function parse(text, sModels) {
+            return $http({
+                method: 'POST',
+                url: 'https://api.projectoxford.ai/linguistics/v1.0/analyze',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Ocp-Apim-Subscription-Key': 'be825782db9342778ddc2ead7bed20ce'
+                },
+                data: {
+                    "language": "en",
+                    "analyzerIds": ["4fa79af1-f22c-408d-98bb-b7d7aeef7f04", "22a6b758-420f-4745-8a3c-46835a67c0d2"],
+                    "text": text
+                }
+            }).then(function (response) {
+                for (var s = 0; s < response.data[0].result.length; s++) {
+                    var parse = response.data[0].result[s];
                     var sModel = sModels[s];
-                    var pos = sModel.parse;
-                    var words = sModel.tokens;
-
-
-                    var acceptableWords = [];
-
-                    for (var i = 0; i < words.length; i++) {
-                        var q = "";
-                        if (pos[i].indexOf("VB") >= 0) {
-                            q = words[i];
+                    for (var i = 0; i < parse.length; i++) {
+                        if (sw[parse[i]]) {
+                            parse.splice(i, 1);
                         }
-                        else if (pos[i].indexOf("NN") >= 0) {
-
-                            if (i > 0 && (pos[i - 1].indexOf("JJ") >= 0 || pos[i - 1] == "CD")) {
-                                q += words[i - 1] + " ";
-
-                            }
-                            q += words[i];
-
-                        }
-
-                        queries.push((ctrl.memeMode ? q + " meme" : q));
-
                     }
-                    sModel.imageQueries = queries;
+                    for (var i = 0; i < sModel.tokens.length; i++) {
+                        if (sw[sModel.tokens[i]]) {
+                            sModel.tokens.splice(i, 1);
+                            parse.splice(i, 1);
+                        }
+                    }
+                    sModel.parse = parse;
+                    sModel.constParse = response.data[1].result[s];
                 }
-
-                /*
-                 var queries = [];
-                 for(var s = 0; s < sModels.length; s ++) {
-                 var sModel = sModels[s];
-                 var sentence = sModel.constParse;
-
-                 //Noun phrase parsing
-                 var npIndex = 0;
-                 var npSentence = sentence;
-                 var inVB = false;
-                 while(npSentence.indexOf("(NP")>=0 || npSentence.indexOf("(VP")>= 0){
-
-                 //do parsing for whatever appears first. NP or VP
-
-                 if(npSentence.indexOf("(NP")>=0 && npSentence.indexOf("(VP") == -1){
-                 npIndex = npSentence.indexOf("NP")+2;
-                 inVB = false;
-                 }
-                 else if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
-                 npIndex = npSentence.indexOf("NP")+2;
-                 inVB = false;
-
-                 }
-                 else {
-                 npIndex = npSentence.indexOf("VP")+2;
-                 inVB = true;
-
-                 }
-                 var index = npIndex;
-                 var phrase = "";
-                 var parenCount = 1;
-                 //inside the noun/verb phrase
-                 while(parenCount > 0){
-
-                 if(npSentence[index] ==")"){
-                 parenCount--;
-
-                 }
-                 else if(npSentence[index] == "("){
-                 parenCount++;
-                 if(inVB){
-
-                 if(npSentence.substring(index+1, index+4) == "NP "){
-                 parenCount = 0;
-                 index--;
-                 }
-                 else if(npSentence.substring(index+1, index+4) == "NN "){
-
-                 var tempStr = npSentence.substring(index);
-                 queries.push(phrase);
-                 queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")") ) + " ")
-                 phrase = "";
-                 parenCount = 0;
-                 index--;
-                 }
-                 }
-                 }
-
-                 else if(npSentence[index]== " "){
-                 var possiblePhrase = npSentence.substring(index+1, npSentence.substring(index).indexOf(")") + index);
-
-                 //If there are no spaces, this means it must be a word.
-                 if(possiblePhrase.indexOf(" ") == -1){
-                 phrase += possiblePhrase + " ";
-
-                 }
-                 }
-
-                 index++;
-                 }
-
-                 if(phrase!= ""){
-                 if(ctrl.memeMode) {
-                 phrase = phrase + "memes";
-                 }
-
-                 queries.push(phrase);
-                 }
-
-                 //remove everything before the noun/verb phrase
-                 npSentence = npSentence.substring(index);
-
-                 }
-
-
-
-                 sModel.imageQueries = queries;
-
-                 queries = [];
-                 }
-
-                 */
-            }
+            });
         }
 
+        function getQueries(sModels) {
+            var queries = [];
+            for (var s = 0; s < sModels.length; s++) {
+                queries = [];
+                var sModel = sModels[s];
+                var pos = sModel.parse;
+                var words = sModel.tokens;
+
+
+                var acceptableWords = [];
+
+                for (var i = 0; i < words.length; i++) {
+                    var q = "";
+                    if (pos[i].indexOf("VB") >= 0) {
+                        q = words[i];
+                    }
+                    else if (pos[i].indexOf("NN") >= 0) {
+
+                        if (i > 0 && (pos[i - 1].indexOf("JJ") >= 0 || pos[i - 1] == "CD")) {
+                            q += words[i - 1] + " ";
+
+                        }
+                        q += words[i];
+
+                    }
+
+                    queries.push((ctrl.memeMode ? q + " meme" : q));
+
+                }
+                sModel.imageQueries = queries;
+            }
+
+            /*
+             var queries = [];
+             for(var s = 0; s < sModels.length; s ++) {
+             var sModel = sModels[s];
+             var sentence = sModel.constParse;
+
+             //Noun phrase parsing
+             var npIndex = 0;
+             var npSentence = sentence;
+             var inVB = false;
+             while(npSentence.indexOf("(NP")>=0 || npSentence.indexOf("(VP")>= 0){
+
+             //do parsing for whatever appears first. NP or VP
+
+             if(npSentence.indexOf("(NP")>=0 && npSentence.indexOf("(VP") == -1){
+             npIndex = npSentence.indexOf("NP")+2;
+             inVB = false;
+             }
+             else if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
+             npIndex = npSentence.indexOf("NP")+2;
+             inVB = false;
+
+             }
+             else {
+             npIndex = npSentence.indexOf("VP")+2;
+             inVB = true;
+
+             }
+             var index = npIndex;
+             var phrase = "";
+             var parenCount = 1;
+             //inside the noun/verb phrase
+             while(parenCount > 0){
+
+             if(npSentence[index] ==")"){
+             parenCount--;
+
+             }
+             else if(npSentence[index] == "("){
+             parenCount++;
+             if(inVB){
+
+             if(npSentence.substring(index+1, index+4) == "NP "){
+             parenCount = 0;
+             index--;
+             }
+             else if(npSentence.substring(index+1, index+4) == "NN "){
+
+             var tempStr = npSentence.substring(index);
+             queries.push(phrase);
+             queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")") ) + " ")
+             phrase = "";
+             parenCount = 0;
+             index--;
+             }
+             }
+             }
+
+             else if(npSentence[index]== " "){
+             var possiblePhrase = npSentence.substring(index+1, npSentence.substring(index).indexOf(")") + index);
+
+             //If there are no spaces, this means it must be a word.
+             if(possiblePhrase.indexOf(" ") == -1){
+             phrase += possiblePhrase + " ";
+
+             }
+             }
+
+             index++;
+             }
+
+             if(phrase!= ""){
+             if(ctrl.memeMode) {
+             phrase = phrase + "memes";
+             }
+
+             queries.push(phrase);
+             }
+
+             //remove everything before the noun/verb phrase
+             npSentence = npSentence.substring(index);
+
+             }
+
+
+
+             sModel.imageQueries = queries;
+
+             queries = [];
+             }
+
+             */
+        }
 
         function getImages(sModels) {
             var promiseArray = [];
@@ -396,5 +344,4 @@
             }
         }
     }
-
-    )();
+}());
