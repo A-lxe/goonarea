@@ -2,6 +2,11 @@
     angular.module('App', ['ngRoute'])
         .config(function ($routeProvider) {
             $routeProvider
+                .when('/', {
+                    templateUrl: "app.html",
+                    controller: StoryCtrl,
+                    controllerAs: "ctrl"
+                })
                 .when('/:text', {
                     templateUrl: "app.html",
                     controller: StoryCtrl,
@@ -14,6 +19,7 @@
         var ctrl = this;
         ctrl.input = "";
         ctrl.sentenceModels = [];
+        ctrl.advancedMode = false;
         ctrl.memeMode = false;
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
@@ -29,14 +35,6 @@
         for (var i = 0; i < stopwords.length; i++) {
             sw[stopwords[i]] = true;
         }
-        /* words = []
-         * for (word of words){
-         * 	if (!sw[word]){
-         *		words.push(word)
-         * 	}
-         * }
-         * stripped_sw = words.join(" ")
-         */
 
 
         function run() {
@@ -87,153 +85,155 @@
                     "text": text
                 }
             }).then(function (response) {
+                console.log(response);
                 for (var s = 0; s < response.data[0].result.length; s++) {
-                    var parse = response.data[0].result[s];
-                    var sModel = sModels[s];
+                    let parse = response.data[0].result[s];
+                    console.log(parse);
+                    let sModel = sModels[s];
+                    console.log(sModel);
                     for (var i = 0; i < parse.length; i++) {
                         if (sw[parse[i]]) {
                             parse.splice(i, 1);
                         }
                     }
-                    for (var i = 0; i < sModel.tokens.length; i++) {
-                        if (sw[sModel.tokens[i]]) {
-                            sModel.tokens.splice(i, 1);
-                            parse.splice(i, 1);
-                        }
-                    }
+
+                    sModel.parse = parse;
+                    sModel.constParse = response.data[1].result[s];
+                    // for (var i = 0; i < sModel.tokens.length; i++) {
+                    //     if (sw[sModel.tokens[i]]) {
+                    //         sModel.tokens.splice(i, 1);
+                    //         parse.splice(i, 1);
+                    //     }
+                    // }
                 }
             });
         }
 
-
         function getQueries(sModels) {
-            var queries = [];
-            for (var s = 0; s < sModels.length; s++) {
-                queries = [];
-                var sModel = sModels[s];
-                var pos = sModel.parse;
-                var words = sModel.tokens;
+            if (!ctrl.advancedMode) {
+                var queries = [];
+                for (var s = 0; s < sModels.length; s++) {
+                    queries = [];
+                    var sModel = sModels[s];
+                    var pos = sModel.parse;
+                    var words = sModel.tokens;
 
 
-                var acceptableWords = [];
+                    var acceptableWords = [];
 
-                for (var i = 0; i < words.length; i++) {
-                    var q = "";
-                    if (pos[i].indexOf("VB") >= 0) {
-                        q = words[i];
-                    }
-                    else if (pos[i].indexOf("NN") >= 0) {
+                    for (var i = 0; i < words.length; i++) {
+                        var q = "";
+                        if (pos[i].indexOf("VB") >= 0) {
+                            q = words[i];
+                        }
+                        else if (pos[i].indexOf("NN") >= 0) {
 
-                        if (i > 0 && (pos[i - 1].indexOf("JJ") >= 0 || pos[i - 1] == "CD")) {
-                            q += words[i - 1] + " ";
+                            if (i > 0 && (pos[i - 1].indexOf("JJ") >= 0 || pos[i - 1] == "CD")) {
+                                q += words[i - 1] + " ";
+
+                            }
+                            q += words[i];
 
                         }
-                        q += words[i];
+
+                        if (q != "")
+                            queries.push((ctrl.memeMode ? q + " meme" : q));
+
+                    }
+                    sModel.imageQueries = queries;
+                }
+            } else {
+                var queries = [];
+                for (var s = 0; s < sModels.length; s++) {
+                    var sModel = sModels[s];
+                    var sentence = sModel.constParse;
+
+                    //Noun phrase parsing
+                    var npIndex = 0;
+                    var npSentence = sentence;
+                    var inVB = false;
+                    while (npSentence.indexOf("(NP") >= 0 || npSentence.indexOf("(VP") >= 0) {
+
+                        //do parsing for whatever appears first. NP or VP
+
+                        if (npSentence.indexOf("(NP") >= 0 && npSentence.indexOf("(VP") == -1) {
+                            npIndex = npSentence.indexOf("NP") + 2;
+                            inVB = false;
+                        }
+                        else if (npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0) {
+                            npIndex = npSentence.indexOf("NP") + 2;
+                            inVB = false;
+
+                        }
+                        else {
+                            npIndex = npSentence.indexOf("VP") + 2;
+                            inVB = true;
+
+                        }
+                        var index = npIndex;
+                        var phrase = "";
+                        var parenCount = 1;
+                        //inside the noun/verb phrase
+                        while (parenCount > 0) {
+
+                            if (npSentence[index] == ")") {
+                                parenCount--;
+
+                            }
+                            else if (npSentence[index] == "(") {
+                                parenCount++;
+                                if (inVB) {
+
+                                    if (npSentence.substring(index + 1, index + 4) == "NP ") {
+                                        parenCount = 0;
+                                        index--;
+                                    }
+                                    else if (npSentence.substring(index + 1, index + 4) == "NN ") {
+
+                                        var tempStr = npSentence.substring(index);
+                                        queries.push(phrase);
+                                        queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")")) + " ")
+                                        phrase = "";
+                                        parenCount = 0;
+                                        index--;
+                                    }
+                                }
+                            }
+
+                            else if (npSentence[index] == " ") {
+                                var possiblePhrase = npSentence.substring(index + 1, npSentence.substring(index).indexOf(")") + index);
+
+                                //If there are no spaces, this means it must be a word.
+                                if (possiblePhrase.indexOf(" ") == -1) {
+                                    phrase += possiblePhrase + " ";
+
+                                }
+                            }
+
+                            index++;
+                        }
+
+                        if (phrase != "") {
+                            if (ctrl.memeMode) {
+                                phrase = phrase + "memes";
+                            }
+
+                            queries.push(phrase);
+                        }
+
+                        //remove everything before the noun/verb phrase
+                        npSentence = npSentence.substring(index);
 
                     }
 
-                    if (q != "")
-                        queries.push((ctrl.memeMode ? q + " meme" : q));
 
+                    sModel.imageQueries = queries;
+
+                    queries = [];
                 }
-                sModel.imageQueries = queries;
             }
-
-            /*
-             var queries = [];
-             for(var s = 0; s < sModels.length; s ++) {
-             var sModel = sModels[s];
-             var sentence = sModel.constParse;
-
-             //Noun phrase parsing
-             var npIndex = 0;
-             var npSentence = sentence;
-             var inVB = false;
-             while(npSentence.indexOf("(NP")>=0 || npSentence.indexOf("(VP")>= 0){
-
-             //do parsing for whatever appears first. NP or VP
-
-             if(npSentence.indexOf("(NP")>=0 && npSentence.indexOf("(VP") == -1){
-             npIndex = npSentence.indexOf("NP")+2;
-             inVB = false;
-             }
-             else if(npSentence.indexOf("(NP") < npSentence.indexOf("(VP") && npSentence.indexOf("(NP") >= 0){
-             npIndex = npSentence.indexOf("NP")+2;
-             inVB = false;
-
-             }
-             else {
-             npIndex = npSentence.indexOf("VP")+2;
-             inVB = true;
-
-             }
-             var index = npIndex;
-             var phrase = "";
-             var parenCount = 1;
-             //inside the noun/verb phrase
-             while(parenCount > 0){
-
-             if(npSentence[index] ==")"){
-             parenCount--;
-
-             }
-             else if(npSentence[index] == "("){
-             parenCount++;
-             if(inVB){
-
-             if(npSentence.substring(index+1, index+4) == "NP "){
-             parenCount = 0;
-             index--;
-             }
-             else if(npSentence.substring(index+1, index+4) == "NN "){
-
-             var tempStr = npSentence.substring(index);
-             queries.push(phrase);
-             queries.push(tempStr.substring(tempStr.indexOf(" ") + 1, tempStr.indexOf(")") ) + " ")
-             phrase = "";
-             parenCount = 0;
-             index--;
-             }
-             }
-             }
-
-             else if(npSentence[index]== " "){
-             var possiblePhrase = npSentence.substring(index+1, npSentence.substring(index).indexOf(")") + index);
-
-             //If there are no spaces, this means it must be a word.
-             if(possiblePhrase.indexOf(" ") == -1){
-             phrase += possiblePhrase + " ";
-
-             }
-             }
-
-             index++;
-             }
-
-             if(phrase!= ""){
-             if(ctrl.memeMode) {
-             phrase = phrase + "memes";
-             }
-
-             queries.push(phrase);
-             }
-
-             //remove everything before the noun/verb phrase
-             npSentence = npSentence.substring(index);
-
-             }
-
-
-
-             sModel.imageQueries = queries;
-
-             queries = [];
-             }
-
-             */
-
-
         }
+
 
         function getImages(sModels) {
             var promiseArray = [];
@@ -341,8 +341,6 @@
 
                     }
                 }
-
-
             }
         }
     }
