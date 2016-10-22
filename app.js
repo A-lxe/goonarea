@@ -79,7 +79,14 @@
         for (var i = 0; i < stopwords.length; i++) {
             sw[stopwords[i]] = true;
         }
-
+	/* words = []
+	 * for (word of words){
+	 * 	if (!sw[word]){
+	 *		words.push(word)
+	 * 	}
+	 * }
+	 * stripped_sw = words.join(" ")
+	 */
         ctrl.run = function () {
             var text = ctrl.input;
             text = text + '.';
