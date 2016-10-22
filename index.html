@@ -18,6 +18,7 @@
     <h1>StoReel</h1>
 
     <img id="image">
+    <canvas id="canvas"></canvas>
     <div ng-controller="StoryCtrl as ctrl">
         <div class="center">
             <textarea name="myTextBox" cols="50" rows="10" style="background-color:#FCF5D8;color:#663300;"
@@ -39,7 +40,9 @@
 </div>
 
 <script src="jsgif/b64.js"></script>
-<script src="jsgif/GIFEncoder.js"></script>
+<script type="text/javascript" src="jsgif/LZWEncoder.js"></script>
+<script type="text/javascript" src="jsgif/NeuQuant.js"></script>
+<script type="text/javascript" src="jsgif/GIFEncoder.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 <script src="app.js"></script>
 </body>
