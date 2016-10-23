@@ -29,7 +29,7 @@
         ctrl.makeGIF = createGIF;
         ctrl.getShareLink = getShareLink;
         ctrl.shareLink = function () {
-            window.prompt("Copy: Ctrl-C Enter", getShareLink());
+            window.prompt("Copy: Ctrl-C Enter", getShareLinkEscaped());
         };
         ctrl.facebookShare = facebookShare;
         ctrl.twitterShare = twitterShare;
@@ -368,7 +368,18 @@
 
         function getShareLink() {
             var link = "https://a-lxe.github.io/storeel" + "#/";
-            link = escape(link + JSON.stringify({
+            link = link + JSON.stringify({
+                    text: ctrl.currentInput,
+                    advancedMode: ctrl.advancedMode,
+                    memeMode: ctrl.memeMode,
+                    storyMode: ctrl.storyMode
+                });
+            return link;
+        }
+
+        function getShareLinkEscaped() {
+            var link = "https://a-lxe.github.io/storeel" + "#/";
+            link = link + escape(JSON.stringify({
                     text: ctrl.currentInput,
                     advancedMode: ctrl.advancedMode,
                     memeMode: ctrl.memeMode,
@@ -429,7 +440,7 @@
             return $http(
                 {
                     method: 'GET',
-                    url: 'https://api-ssl.bitly.com/v3/shorten?access_token=' + 'f6e059ce201e9c2b48cabb5f0223d24ff1a261e2' + '&longUrl=' + url + ""
+                    url: 'https://api-ssl.bitly.com/v3/shorten?access_token=' + 'f6e059ce201e9c2b48cabb5f0223d24ff1a261e2' + '&longUrl=' + escape(url) + ""
                 }
             )
         }
