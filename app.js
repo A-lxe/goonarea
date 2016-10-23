@@ -340,7 +340,7 @@
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
                         imgrRequest(encode64(encoder.stream().getData())).then(
                             function(response) {
-                                ctrl.imgurLink = response.data.data.gifv;
+                                $scope.$apply(function() {ctrl.imgurLink = response.data.data.gifv });
                             }
                         );
                         $scope.$apply(function () {
