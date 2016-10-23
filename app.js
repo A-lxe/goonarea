@@ -168,7 +168,7 @@
 							}
 							if(ctrl.nsfwMode)
 							{
-								
+								console.log("YOOOOO");
 								q + " porn";
 							}
                             queries.push(q);
@@ -254,7 +254,7 @@
                             }
 
 							if(ctrl.nsfwMode){
-								
+								console.log("YOOOOO");
 								phrase = phrase + "porn";
 							}
                             queries.push(phrase);
