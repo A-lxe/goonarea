@@ -298,7 +298,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : "") +,
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : ""),
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
