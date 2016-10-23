@@ -411,9 +411,12 @@
                 picture: $rootScope.shareImgUrl,
                 caption: 'A visual story produced by Storeel',
                 description: 'Using Microsoft Cognitive APIs, Storeel takes textual stories, poetry, and 200-odd-character ' +
-                'ruminations into visual adventures in conjunction with the Bing Image Search API.',
-                message: 'Message you want to show'
+                'ruminations into visual adventures in conjunction with the Bing Image Search API.'
             });
+        }
+
+        function twitterShare() {
+
         }
     }
 

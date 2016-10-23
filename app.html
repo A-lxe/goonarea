@@ -28,7 +28,9 @@
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
-                    <a href="https://twitter.com/share" id="twito" class="twitter-share-button" data-show-count="false"></a>
+                    <a href="https://twitter.com/share" id="twito" class="twitter-share-button" data-show-count="false"
+                       data-url="{{ctrl.getShareLink()}}"
+                       data-text="Hey come check out the story I made using Storeel!"></a>
                     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     <div
                             class="fb-like"
