@@ -403,6 +403,7 @@
         }
 
         function facebookShare() {
+            console.log(getShareLink());
             FB.ui({
                 method: 'share',
                 name: 'Storeel',
