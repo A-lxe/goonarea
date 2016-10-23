@@ -13,9 +13,9 @@
                     controllerAs: "ctrl"
                 });
         })
-        .controller('StoryCtrl', ['$scope', '$rootScope', '$http', '$q', '$routeParams', '$location', StoryCtrl]);
+        .controller('StoryCtrl', ['$scope', '$rootScope', '$http', '$q', '$routeParams', '$location', '$timeout', StoryCtrl]);
 
-    function StoryCtrl($scope, $rootScope, $http, $q, $routeParams, $location) {
+    function StoryCtrl($scope, $rootScope, $http, $q, $routeParams, $location, $timeout) {
         var ctrl = this;
         ctrl.input = "";
         ctrl.currentInput = "";
@@ -27,6 +27,7 @@
         ctrl.gifSpeed = 1000;
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
+        ctrl.getShareLink = getShareLink;
         ctrl.shareLink = function () {
             window.prompt("Copy: Ctrl-C Enter", getShareLink());
         };
@@ -302,7 +303,7 @@
                     urls.push(url);
                 }
             }
-            encodeGIF(urls);
+            return encodeGIF(urls);
             function encodeGIF(links) {
                 var encoder = new GIFEncoder();
                 encoder.setSize(300, 300);
@@ -320,7 +321,7 @@
                     imgs.push(img);
                 }
                 console.log(imgs);
-                setTimeout(
+                return $timeout(
                     function () {
                         var canvas = document.getElementById("canvas");
                         canvas.width = 300;
@@ -337,7 +338,11 @@
                         encoder.finish();
 
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
-                        console.log(imgrRequest(encode64(encoder.stream().getData())));
+                        imgrRequest(encode64(encoder.stream().getData())).then(
+                            function(response) {
+                                ctrl.imgurLink = response.data.data.gifv;
+                            }
+                        );
                         $scope.$apply(function () {
                             ctrl.gifReady = true;
                         });
