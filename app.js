@@ -168,10 +168,11 @@
 							}
 							if(ctrl.nsfwMode)
 							{
-								console.log("YOOOOO");
+								
 								q + " porn";
 							}
                             queries.push(q);
+							console.log(q);
 						}
 
                     }
