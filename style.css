@@ -39,7 +39,7 @@ body{
 }
 
 #gifSpeed {
-	width: 50px;
+	width: 42px;
 }
 
 .image-title {
@@ -47,6 +47,4 @@ body{
 	padding: 30px;
 	font-size: 32px;
 	color:#243249;
-	/*font-style: italic;*/
-	/*font-weight: bold;*/
 }
