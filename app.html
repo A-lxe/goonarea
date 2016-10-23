@@ -20,11 +20,10 @@
             <br/>
             <div>
                 <span>
+                    <input id="gifSpeed" ng-model="ctrl.gifSpeed" type="text"><label for="gifSpeed">Gif Speed</label>
                     <input id="memeMode" ng-model="ctrl.memeMode" type="checkbox"><label
                         for="memeMode">Meme Mode</label>
                     <input id="advancedMode" ng-model="ctrl.advancedMode" type="checkbox"><label for="advancedMode">Advanced Mode</label>
-                    
-
 				</span>
 				<br/>
 				<span>
@@ -40,7 +39,8 @@
                             class="fb-xfbml-parse-ignore" target="_blank"
                             href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share
                         on Facebook</a></div>
-                    <div><a ng-click="ctrl.shareLink()">Get share link.</a></div>
+                    <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
+                    <textarea id="holdtext" style="display:none"></textarea>
                 </div>
             </div>
         </div>

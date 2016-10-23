@@ -27,12 +27,16 @@
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
         ctrl.shareLink = function() {
-            alert(getShareLink());
+            window.prompt("Copy: Ctrl-C Enter",getShareLink());
         };
 
         if ($routeParams.text) {
-            console.log($routeParams.text)
-            ctrl.input = $routeParams.text;
+            var inpObj = JSON.parse(unescape($routeParams.text));
+            console.log(JSON.stringify(inpObj));
+            ctrl.input = inpObj.text;
+            ctrl.memeMode = inpObj.memeMode;
+            ctrl.storyMode = inpObj.storyMode;
+            ctrl.advancedMode = inpObj.advancedMode;
             ctrl.run();
         }
 
@@ -340,13 +344,13 @@
         }
 
         function getShareLink() {
-            var link = $location.host() + "/#/";
-            link = link + ctrl.currentInput + "?";
-            link = link +
-                    "advancedMode=" + ctrl.advancedMode + "&" +
-                "memeMode=" + ctrl.memeMode + "&" +
-                "storyMode=" + ctrl.storyMode + "&" +
-                "advancedMode=" + ctrl.advancedMode;
+            var link = $location.host() + "#/";
+            link = link + escape(JSON.stringify({
+                    text: ctrl.currentInput,
+                    advancedMode: ctrl.advancedMode,
+                    memeMode: ctrl.memeMode,
+                    storyMode: ctrl.storyMode
+                }));
             return link;
         }
     }
