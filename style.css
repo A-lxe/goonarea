@@ -10,7 +10,7 @@ body{
 
 .content {
 	padding-top:30px;
-	max-width: 1000px;
+	max-width: 650px;
 	text-align:center;
 	margin-left:auto;
 	margin-right:auto;
@@ -21,4 +21,17 @@ body{
 	width:auto;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.console {
+	display:flex;
+	flex-direction:row;
+}
+
+.input {
+	max-width: 300px;
+}
+
+#image {
+
 }
