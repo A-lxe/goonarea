@@ -330,7 +330,7 @@
                             encoder.addFrame(context);
                         }
                         encoder.finish();
-                        console.log(encoder.stream().getData());
+                        
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
 						console.log(imgrRequest(encode64(encoder.stream().getData())));
                         $scope.$apply(function() {
