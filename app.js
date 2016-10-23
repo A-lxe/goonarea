@@ -60,7 +60,15 @@
                 function (response) {
                     getQueries(ctrl.sentenceModels);
                     getImages(ctrl.sentenceModels).then(function (response) {
-                        createGIF();
+                        createGIF().then(
+                            function(response) {
+                                imgrRequest(response).then(
+                                    function(response) {
+                                        $rootScope.shareImgUrl = response.data.data.gifv;
+                                    }
+                                )
+                            }
+                        );
                     });
                 }
             );
@@ -332,20 +340,14 @@
                             context.fillStyle = "black";
                             context.fillRect(0, 0, 300, 300);
                             context.rect(0, 0, 300, 300);
-                            context.drawImage(img, (300 - img.width) / 2, (300 - img.height) / 2, w, l);
+                            context.drawImage(img, (300 - img.width) / 2, (300 - img.height) / 2);
                             encoder.addFrame(context);
                         }
                         encoder.finish();
 
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
-                        imgrRequest(encode64(encoder.stream().getData())).then(
-                            function(response) {
-                                ctrl.imgurLink = response.data.data.gifv;
-                            }
-                        );
-                        $scope.$apply(function () {
-                            ctrl.gifReady = true;
-                        });
+                        ctrl.gifReady = true;
+                        return encode64(encoder.stream().getData());
                     }, 3000);
             }
         }
@@ -374,9 +376,8 @@
                 dataType: 'json'
 
             }).then(function (response) {
-
-                    link = response;
-                    console.log(link);
+                    console.log(response);
+                    return response;
                 },
                 function (error) {
                     console.log(error);

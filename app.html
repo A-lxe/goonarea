@@ -15,7 +15,7 @@
 
     <div class="console">
         <div class="input">
-            <textarea name="myTextBox" cols="38" rows="12" style="font-size: 16;background-color:#FCF5D8;color:#663300;"
+            <textarea name="myTextBox" maxlength="500" cols="38" rows="12" style="font-size: 16;background-color:#FCF5D8;color:#663300;"
                       ng-model="ctrl.input" placeholder="Tell me a story..."></textarea>
             <br/>
             <div>
@@ -36,13 +36,11 @@
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
-                    <a href="https://twitter.com/share" class="twitter-share-button"
-                       data-text="Check out my story: {{ctrl.imgurLink}}\n I made it at {{ctrl.getShareLink()}}"
-                       data-show-count="false">Tweet</a>
                     <div class="fb-share-button" data-href="https://a-lxe.github.io/storeel/#/" data-layout="button"
                          data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank"
                                                                         href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fa-lxe.github.io%2Fstoreel%2F%23%2F&amp;src=sdkpreparse">Share</a>
                     </div>
+                    <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
