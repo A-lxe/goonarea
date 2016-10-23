@@ -48,3 +48,12 @@ body{
 	font-size: 32px;
 	color:#243249;
 }
+
+.fb-like {
+	width:30px;
+	display:inline-block;
+}
+.twitter-share {
+	display: inline-block;
+	width:30px;
+}

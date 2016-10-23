@@ -368,7 +368,7 @@
 
         function getShareLink() {
             var link = "https://a-lxe.github.io/storeel" + "#/";
-            link = link + escape(JSON.stringify({
+            link = escape(link + JSON.stringify({
                     text: ctrl.currentInput,
                     advancedMode: ctrl.advancedMode,
                     memeMode: ctrl.memeMode,
@@ -425,10 +425,11 @@
         }
 
         function shortenUrl(url) {
+            console.log(url);
             return $http(
                 {
                     method: 'GET',
-                    url: 'https://api-ssl.bitly.com/v3/shorten?access_token=' + 'f6e059ce201e9c2b48cabb5f0223d24ff1a261e2' + '&longUrl='+url
+                    url: 'https://api-ssl.bitly.com/v3/shorten?access_token=' + 'f6e059ce201e9c2b48cabb5f0223d24ff1a261e2' + '&longUrl=' + url + ""
                 }
             )
         }
