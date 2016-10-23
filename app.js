@@ -32,6 +32,7 @@
             window.prompt("Copy: Ctrl-C Enter", getShareLink());
         };
         ctrl.facebookShare = facebookShare;
+        ctrl.twitterShare = twitterShare;
 
         if ($routeParams.text) {
             var inpObj = JSON.parse(unescape($routeParams.text));
