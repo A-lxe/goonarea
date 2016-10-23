@@ -1,14 +1,4 @@
 <link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
-<div id="fb-root" data-size="large"></div>
-
-<link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
-	<script>(function(d, s, id) {
-	  var js, fjs = d.getElementsByTagName(s)[0];
-	  if (d.getElementById(id)) return;
-	  js = d.createElement(s); js.id = id;
-	  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1";
-	  fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));</script>
 
 <canvas id="canvas" hidden></canvas>
 <div class="content">
@@ -16,7 +6,8 @@
 
     <div class="console">
         <div class="input">
-            <textarea name="myTextBox" maxlength="500" cols="38" rows="12" style="font-size: 16;background-color:#FCF5D8;color:#663300;"
+            <textarea name="myTextBox" maxlength="500" cols="38" rows="12"
+                      style="font-size: 16;background-color:#FCF5D8;color:#663300;"
                       ng-model="ctrl.input" placeholder="Tell me a story..."></textarea>
             <br/>
             <div>
@@ -37,15 +28,23 @@
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
-                    <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
-                    
+                    <a href="https://twitter.com/share" id="twito" class="twitter-share-button" data-show-count="false"></a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div
+                            class="fb-like"
+                            data-share="true"
+                            data-width="450"
+                            data-show-faces="true">
+                    </div>
+
+
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
-				<div class="fb-share-button"
-						data-href="{{shareImgUrl}}" 
-						data-layout="button_count">
-					</div>
+                <div class="fb-share-button"
+                     data-href="{{shareImgUrl}}"
+                     data-layout="button_count">
+                </div>
             </div>
         </div>
         <div class="GIF">
