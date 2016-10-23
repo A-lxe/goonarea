@@ -22,17 +22,21 @@
         ctrl.sentenceModels = [];
         ctrl.advancedMode = false;
         ctrl.memeMode = false;
-		ctrl.storyMode = false;
+        ctrl.storyMode = false;
         ctrl.gifReady = false;
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
-        ctrl.shareLink = function() {
-            alert(getShareLink());
+        ctrl.shareLink = function () {
+            window.prompt("Copy: Ctrl-C Enter", getShareLink());
         };
 
         if ($routeParams.text) {
-            console.log($routeParams.text)
-            ctrl.input = $routeParams.text;
+            var inpObj = JSON.parse(unescape($routeParams.text));
+            console.log(JSON.stringify(inpObj));
+            ctrl.input = inpObj.text;
+            ctrl.memeMode = inpObj.memeMode;
+            ctrl.storyMode = inpObj.storyMode;
+            ctrl.advancedMode = inpObj.advancedMode;
             ctrl.run();
         }
 
@@ -53,7 +57,7 @@
             parse(text, ctrl.sentenceModels).then(
                 function (response) {
                     getQueries(ctrl.sentenceModels);
-                    getImages(ctrl.sentenceModels).then(function(response) {
+                    getImages(ctrl.sentenceModels).then(function (response) {
                         createGIF();
                     });
                 }
@@ -265,7 +269,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' +(ctrl.storyMode ? '&imageType=Clipart' : ""),
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : ""),
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
@@ -324,15 +328,16 @@
                         for (var i = 0; i < imgs.length; i++) {
                             let img = imgs[i];
                             context.fillStyle = "black";
-                            context.fillRect(0,0,300,300);
-                            context.rect(0,0,300,300);
+                            context.fillRect(0, 0, 300, 300);
+                            context.rect(0, 0, 300, 300);
                             context.drawImage(img, (300 - img.width) / 2, (300 - img.height) / 2);
                             encoder.addFrame(context);
                         }
                         encoder.finish();
-                        console.log(encoder.stream().getData());
+
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
-                        $scope.$apply(function() {
+                        console.log(imgrRequest(encode64(encoder.stream().getData())));
+                        $scope.$apply(function () {
                             ctrl.gifReady = true;
                         });
                     }, 2000);
@@ -340,14 +345,38 @@
         }
 
         function getShareLink() {
-            var link = $location.host() + "/#/";
-            link = link + ctrl.currentInput + "?";
-            link = link +
-                    "advancedMode=" + ctrl.advancedMode + "&" +
-                "memeMode=" + ctrl.memeMode + "&" +
-                "storyMode=" + ctrl.storyMode + "&" +
-                "advancedMode=" + ctrl.advancedMode;
+            var link = $location.host() + "#/";
+            link = link + escape(JSON.stringify({
+                    text: ctrl.currentInput,
+                    advancedMode: ctrl.advancedMode,
+                    memeMode: ctrl.memeMode,
+                    storyMode: ctrl.storyMode
+                }));
             return link;
         }
+
+        function imgrRequest(query) {
+            return $http({
+                method: 'POST',
+                url: 'https://api.imgur.com/3/image',
+                headers: {
+                    'Authorization': 'Client-ID 9904a80c276342f'
+                },
+                data: {
+                    image: query
+                },
+                dataType: 'json'
+
+            }).then(function (response) {
+
+                    link = response;
+                    console.log(link);
+                },
+                function (error) {
+                    console.log(error);
+                });
+        }
     }
+
+
 }());
