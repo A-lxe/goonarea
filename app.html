@@ -38,13 +38,14 @@
                 </span>
                 <div>
                     <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
-                    <div class="fb-share-button"
-						data-href="{{shareImgUrl}}" 
-						data-layout="button_count">
-					</div>
+                    
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
+				<div class="fb-share-button"
+						data-href="{{shareImgUrl}}" 
+						data-layout="button_count">
+					</div>
             </div>
         </div>
         <div class="GIF">
