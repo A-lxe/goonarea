@@ -164,15 +164,15 @@
                         if (q != "")
 						{
 							if(ctrl.memeMode){
-								q + " meme";
+								q = q+ " meme";
 							}
 							if(ctrl.nsfwMode)
 							{
 								
-								q + " porn";
+								q =q + " porn";
 							}
                             queries.push(q);
-							console.log(q);
+							
 						}
 
                     }
@@ -255,7 +255,7 @@
                             }
 
 							if(ctrl.nsfwMode){
-								console.log("YOOOOO");
+								
 								phrase = phrase + "porn";
 							}
                             queries.push(phrase);
