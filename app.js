@@ -50,6 +50,7 @@
 
 
         function run() {
+            ctrl.gifReady = false;
             var text = ctrl.input;
             text = text + '.';
             text = text.replace(/(?:\r\n|\r|\n)/g, '. ');
@@ -61,9 +62,9 @@
                     getQueries(ctrl.sentenceModels);
                     getImages(ctrl.sentenceModels).then(function (response) {
                         createGIF().then(
-                            function(response) {
+                            function (response) {
                                 imgrRequest(response).then(
-                                    function(response) {
+                                    function (response) {
                                         $rootScope.shareImgUrl = response.data.data.gifv;
                                     }
                                 )
@@ -337,20 +338,21 @@
                         var context = canvas.getContext("2d");
                         for (var i = 0; i < imgs.length; i++) {
                             let img = imgs[i];
+                            if(!img.complete || img.naturalWidth === 0) continue;
                             context.fillStyle = "black";
                             context.fillRect(0, 0, 300, 300);
                             context.rect(0, 0, 300, 300);
-			    width = img.width
-			    height = img.height
-			    largest_dim = Math.max(width, height);
-			    if (largest_dim>300){
-			    	dilation_factor = 300/largest_dim;
-			    	width = width*dilation_factor;
-				height = height*dilation_factor;
-			    }
-			    x_0 = 300 - width;
-			    y_0 = 300 - height;
-                            context.drawImage(img, x_0/2, y_0/2, width, height);
+                            let width = img.width
+                            let height = img.height
+                            let largest_dim = Math.max(width, height);
+                            if (largest_dim > 300) {
+                                let dilation_factor = 300 / largest_dim;
+                                width = width * dilation_factor;
+                                height = height * dilation_factor;
+                            }
+                            let x_0 = 300 - width;
+                            let y_0 = 300 - height;
+                            context.drawImage(img, x_0 / 2, y_0 / 2, width, height);
                             encoder.addFrame(context);
                         }
                         encoder.finish();
