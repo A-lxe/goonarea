@@ -416,8 +416,8 @@
                 function(response) {
                     console.log(response);
                     let s = "https://twitter.com/intent/tweet?" +
-                        "url=" + response.data + "&" +
-                        "text=" + "Hey come check out the visual story I made using Storeel!";
+                        "text=" + escape("Hey come check out the visual story I made using Storeel!") + "&" +
+                        "url=" + escape(response.data.data.url);
                     window.open(s);
                 }
             )
