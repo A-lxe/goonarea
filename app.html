@@ -1,11 +1,11 @@
+<link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
 <div id="fb-root"></div>
-<link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
 <script>(function (d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
     js = d.createElement(s);
     js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
+    js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
 
@@ -25,30 +25,33 @@
                         for="memeMode">Meme Mode</label>
                     <input id="advancedMode" ng-model="ctrl.advancedMode" type="checkbox"><label for="advancedMode">Advanced Mode</label>
 				</span>
-				<br/>
-				<span>
-					<input id="storyMode" ng-model="ctrl.storyMode" type="checkbox"><label for="storyMode">Story Mode</label>
-					<input id="nsfwMode" ng-model="ctrl.nsfwMode" type="checkbox"><label for="nsfwMode">NSFW Mode ;)</label>
+                <br/>
+                <span>
+					<input id="storyMode" ng-model="ctrl.storyMode" type="checkbox"><label
+                        for="storyMode">Story Mode</label>
+					<input id="nsfwMode" ng-model="ctrl.nsfwMode" type="checkbox"><label
+                        for="nsfwMode">NSFW Mode ;)</label>
 				</span>
                 <span>
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out my story: {{ctrl.imgurLink}}\n I made it at {{ctrl.getShareLink()}}" data-show-count="false">Tweet</a>
-                    <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/"
-                         data-layout="button" data-size="small" data-mobile-iframe="true"><a
-                            class="fb-xfbml-parse-ignore" target="_blank"
-                            href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share
-                        on Facebook</a></div>
+                    <a href="https://twitter.com/share" class="twitter-share-button"
+                       data-text="Check out my story: {{ctrl.imgurLink}}\n I made it at {{ctrl.getShareLink()}}"
+                       data-show-count="false">Tweet</a>
+                    <div class="fb-share-button" data-href="https://a-lxe.github.io/storeel/#/" data-layout="button"
+                         data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank"
+                                                                        href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fa-lxe.github.io%2Fstoreel%2F%23%2F&amp;src=sdkpreparse">Share</a>
+                    </div>
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
             </div>
         </div>
-	<div class="GIF">
-		<img id="image" ng-show="ctrl.gifReady" width="300px" height="300px">
-	</div>
-	</div>
+        <div class="GIF">
+            <img id="image" ng-show="ctrl.gifReady" width="300px" height="300px">
+        </div>
+    </div>
     <div ng-repeat="sModel in ctrl.sentenceModels">
         <div class="image-title">{{sModel.text}}</div>
         <span ng-repeat="img in sModel.images">

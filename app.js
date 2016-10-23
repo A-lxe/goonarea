@@ -332,7 +332,7 @@
                             context.fillStyle = "black";
                             context.fillRect(0, 0, 300, 300);
                             context.rect(0, 0, 300, 300);
-                            context.drawImage(img, (300 - img.width) / 2, (300 - img.height) / 2);
+                            context.drawImage(img, (300 - img.width) / 2, (300 - img.height) / 2, w, l);
                             encoder.addFrame(context);
                         }
                         encoder.finish();
