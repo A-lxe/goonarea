@@ -340,7 +340,7 @@
                         $scope.$apply(function () {
                             ctrl.gifReady = true;
                         });
-                    }, 2000);
+                    }, 3000);
             }
         }
 
