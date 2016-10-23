@@ -6,7 +6,7 @@
 	  var js, fjs = d.getElementsByTagName(s)[0];
 	  if (d.getElementById(id)) return;
 	  js = d.createElement(s); js.id = id;
-	  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1";
+	  js.src = "http://connect.facebook.net/en_US/sdk.js#xfbml=1";
 	  fjs.parentNode.insertBefore(js, fjs);
 	}(document, 'script', 'facebook-jssdk'));</script>
 
@@ -37,7 +37,7 @@
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
-                    <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
+                    <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Tweet!</a>
                     
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
