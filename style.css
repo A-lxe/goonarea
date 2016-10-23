@@ -37,6 +37,11 @@ body{
 .GIF {
 	width:50%;
 }
+
+#gifSpeed {
+	width: 50px;
+}
+
 .image-title {
 	font: 400 'Lobster Two';
 	padding: 30px;
@@ -44,4 +49,4 @@ body{
 	color:#243249;
 	/*font-style: italic;*/
 	/*font-weight: bold;*/
-}																																																																																																			
+}
