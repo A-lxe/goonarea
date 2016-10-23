@@ -1,13 +1,14 @@
 <link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
-<div id="fb-root"></div>
-<script>(function (d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<div id="fb-root" data-size="large"></div>
+
+<link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
 
 <canvas id="canvas" hidden></canvas>
 <div class="content">
@@ -37,13 +38,14 @@
                 </span>
                 <div>
                     <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
-                    <div class="fb-share-button"
-						data-href="{{shareImgUrl}}" 
-						data-layout="button_count">
-					</div>
+                    
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
+				<div class="fb-share-button"
+						data-href="{{shareImgUrl}}" 
+						data-layout="button_count">
+					</div>
             </div>
         </div>
         <div class="GIF">
