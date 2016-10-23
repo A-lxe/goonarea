@@ -371,7 +371,7 @@
         }
 
         function getShareLink() {
-            var link = $location.host() + "#/";
+            var link = "https://a-lxe.github.io/storeel" + "#/";
             link = link + escape(JSON.stringify({
                     text: ctrl.currentInput,
                     advancedMode: ctrl.advancedMode,
