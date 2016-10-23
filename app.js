@@ -369,7 +369,7 @@
 					link = response;
                 },
                 function (error) {
-                    
+                    console.log(error);
                 });
             return link;
         }
