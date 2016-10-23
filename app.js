@@ -361,7 +361,9 @@
                 },
 				data:{
 					image: query
-				}
+				},
+				dataType: 'json'
+				
             }).then(function (response) {
                     
 					link = response;
