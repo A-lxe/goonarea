@@ -43,11 +43,6 @@
             ctrl.run();
         }
 
-        twttr.widgets.createShareButton(
-            "https://a-lxe.github.io/storeel",
-            document.getElementById("twito")
-        );
-
         var stopwords = ["then", "there", "this", "i", "it", "a", "a\'s", "able", "after", "afterwards", "again", "almost", "along", "also", "although", "am", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "around", "as", "aside", "at", "available", "away", "awfully", "b", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "being", "below", "beside", "besides", "better", "both", "but", "by", "c", "c\'s", "cause", "causes", "co", "com", "come", "comes", "concerning", "consequently", "d", "e", "each", "edu", "eg", "especially", "et", "etc", "even", "ever", "every", "everybody", "everyone", "everything", "everywhere", "ex", "f", "far", "for", "forth", "four", "from", "further", "furthermore", "g", "h", "had", "hadn\'t", "has", "hasn\'t", "have", "haven\'t", "having", "he", "he\'s", "her", "herself", "him", "himself", "his", "how", "however", "i\'d", "i\'ll", "i\'m", "i\'ve", "ie", "if", "in", "inasmuch", "inc", "insofar", "instead", "into", "is", "isn\'t", "it", "it\'d", "it\'ll", "it\'s", "its", "itself", "j", "just", "k", "kept", "know", "l", "lately", "later", "let", "let\'s", "ltd", "m", "may", "me", "might", "must", "my", "myself", "n", "namely", "nd", "o", "of", "off", "often", "oh", "ok", "okay", "only", "onto", "or", "other", "others", "otherwise", "ought", "our", "ours", "ourselves", "overall", "own", "p", "per", "perhaps", "placed", "q", "que", "quite", "qv", "r", "rather", "rd", "re", "s", "said", "saw", "secondly", "self", "selves", "she", "since", "six", "so", "some", "somebody", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "sub", "such", "sup", "sure", "t", "t\'s", "th", "than", "that", "that\'s", "thats", "the", "their", "theirs", "them", "themselves", "there", "there\'s", "therefore", "theres", "these", "they", "they\'d", "they\'ll", "they\'re", "they\'ve", "third", "those", "though", "three", "thru", "thus", "to", "too", "took", "twice", "two", "u", "un", "until", "unto", "upon", "us", "use", "used", "uses", "using", "uucp", "v", "was", "wasn\'t", "we", "we\'d", "we\'ll", "we\'re", "we\'ve", "were", "weren\'t", "what", "what\'s", "when", "whence", "whenever", "where", "where\'s", "whereafter", "whereas", "whereby", "wherein", "whereupon", "wherever", "whether", "which", "while", "whither", "who", "who\'s", "whoever", "whole", "whom", "whose", "why", "will", "willing", "with", "within", "without", "won\'t", "would", "wouldn\'t", "x", "y", "you", "you\'d", "you\'ll", "you\'re", "you\'ve", "your", "yours", "yourself", "yourselves", "z", "zero", "\!", "\#", "\$", "\%", "\&", "\'", "\(", "\)", "\*", "\+", "\-", ".", ",", "/", ":", ";", "\<", "=", "\>", "\?", "@", "\[", "\]", "\^", "\_", "\`", "\{", "\|", "\}", "\~"]
         var sw = {};
         for (var i = 0; i < stopwords.length; i++) {
@@ -416,8 +411,12 @@
         }
 
         function twitterShare() {
-
+            let s = "https://twitter.com/intent/tweet?" +
+                    "url=" + getShareLink() + "&" +
+                    "text=" + "Hey come check out the visual story I made using Storeel!";
+            window.open(s);
         }
+
     }
 
 
