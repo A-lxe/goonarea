@@ -340,12 +340,11 @@
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
                         imgrRequest(encode64(encoder.stream().getData())).then(
                             function(response) {
-                                $scope.$apply(function() {ctrl.imgurLink = response.data.data.gifv });
+                                $scope.$apply(function() {ctrl.imgurLink = response.data.data.gifv; ctrl.gifReady = true; });
+								
                             }
                         );
-                        $scope.$apply(function () {
-                            ctrl.gifReady = true;
-                        });
+                        
                     }, 3000);
             }
         }
