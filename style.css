@@ -29,10 +29,9 @@ body{
 }
 
 .input {
-	max-width: 300px;
+	width:50%;
 }
 
 #image {
-	position: relative;
-	right:0;
+	width:50%;
 }

@@ -21,6 +21,8 @@
         ctrl.sentenceModels = [];
         ctrl.advancedMode = false;
         ctrl.memeMode = false;
+		ctrl.storyMode = false;
+        ctrl.gifReady = false;
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
 
@@ -256,7 +258,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&',
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' +(ctrl.storyMode ? '&imageType=Clipart' : ""),
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
@@ -323,7 +325,9 @@
                         encoder.finish();
                         console.log(encoder.stream().getData());
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
-                        ctrl.gifReady = true;
+                        $scope.$apply(function() {
+                            ctrl.gifReady = true;
+                        });
                     }, 2000);
             }
         }
