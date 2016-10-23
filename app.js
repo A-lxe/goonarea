@@ -332,6 +332,7 @@
                         encoder.finish();
                         console.log(encoder.stream().getData());
                         document.getElementById('image').src = 'data:image/gif;base64,' + encode64(encoder.stream().getData());
+						console.log(imgrRequest(encode64(encoder.stream().getData())));
                         $scope.$apply(function() {
                             ctrl.gifReady = true;
                         });
@@ -350,4 +351,43 @@
             return link;
         }
     }
+	
+	$.ajax({
+    url: 'https://api.imgur.com/3/image',
+    type: 'post',
+    headers: {
+        Authorization: 'Client-ID 9904a80c276342f'
+    },
+    data: {
+        image: img
+    },
+    dataType: 'json',
+    success: function(response) {
+        if(response.success) {
+            window.location = response.data.link;
+        }
+    }
+	});
+	
+	function imgrRequest(query) {
+			var link;
+            
+            $http({
+                method: 'POST',
+                url: 'https://api.imgur.com/3/image',
+                headers: {
+                    'Authorization': 'Client-ID 9904a80c276342f'
+                },
+				data:{
+					image: query
+				}
+            }).then(function (response) {
+                    
+					link = response;
+                },
+                function (error) {
+                    
+                });
+            return link;
+        }
 }());
