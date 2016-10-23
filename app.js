@@ -340,7 +340,7 @@
                         var context = canvas.getContext("2d");
                         for (var i = 0; i < imgs.length; i++) {
                             let img = imgs[i];
-                            if(!img.complete || img.naturalWidth === 0) continue;
+                            if (!img.complete || img.naturalWidth === 0) continue;
                             context.fillStyle = "black";
                             context.fillRect(0, 0, 300, 300);
                             context.rect(0, 0, 300, 300);
@@ -412,12 +412,26 @@
         }
 
         function twitterShare() {
-            let s = "https://twitter.com/intent/tweet?" +
-                    "url=" + getShareLink() + "&" +
-                    "text=" + "Hey come check out the visual story I made using Storeel!";
-            window.open(s);
+            shortenUrl(getShareLink()).then(
+                function(response) {
+                    console.log(response);
+                    let s = "https://twitter.com/intent/tweet?" +
+                        "url=" + response.data + "&" +
+                        "text=" + "Hey come check out the visual story I made using Storeel!";
+                    window.open(s);
+                }
+            )
+
         }
 
+        function shortenUrl(url) {
+            return $http(
+                {
+                    method: 'GET',
+                    url: 'https://api-ssl.bitly.com/v3/shorten?access_token=' + 'f6e059ce201e9c2b48cabb5f0223d24ff1a261e2' + '&longUrl='+url
+                }
+            )
+        }
     }
 
 
