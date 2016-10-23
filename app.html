@@ -1,4 +1,6 @@
+<link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
 <div id="fb-root"></div>
+<<<<<<< HEAD
 <link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
 	<script>(function(d, s, id) {
 	  var js, fjs = d.getElementsByTagName(s)[0];
@@ -24,18 +26,19 @@
                         for="memeMode">Meme Mode</label>
                     <input id="advancedMode" ng-model="ctrl.advancedMode" type="checkbox"><label for="advancedMode">Advanced Mode</label>
 				</span>
-				<br/>
-				<span>
-					<input id="storyMode" ng-model="ctrl.storyMode" type="checkbox"><label for="storyMode">Story Mode</label>
-					<input id="nsfwMode" ng-model="ctrl.nsfwMode" type="checkbox"><label for="nsfwMode">NSFW Mode ;)</label>
+                <br/>
+                <span>
+					<input id="storyMode" ng-model="ctrl.storyMode" type="checkbox"><label
+                        for="storyMode">Story Mode</label>
+					<input id="nsfwMode" ng-model="ctrl.nsfwMode" type="checkbox"><label
+                        for="nsfwMode">NSFW Mode ;)</label>
 				</span>
                 <span>
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
                     <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
-					
-                    <div class="fb-share-button" 
+                    <div class="fb-share-button"
 						data-href="{{shareImgUrl}}" 
 						data-layout="button_count">
 					</div>
@@ -44,10 +47,10 @@
                 </div>
             </div>
         </div>
-	<div class="GIF">
-		<img id="image" ng-show="ctrl.gifReady" width="300px" height="300px">
-	</div>
-	</div>
+        <div class="GIF">
+            <img id="image" ng-show="ctrl.gifReady" width="300px" height="300px">
+        </div>
+    </div>
     <div ng-repeat="sModel in ctrl.sentenceModels">
         <div class="image-title">{{sModel.text}}</div>
         <span ng-repeat="img in sModel.images">
