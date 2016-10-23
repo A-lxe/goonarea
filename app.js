@@ -350,26 +350,7 @@
                 "advancedMode=" + ctrl.advancedMode;
             return link;
         }
-    }
-	
-	$.ajax({
-    url: 'https://api.imgur.com/3/image',
-    type: 'post',
-    headers: {
-        Authorization: 'Client-ID 9904a80c276342f'
-    },
-    data: {
-        image: img
-    },
-    dataType: 'json',
-    success: function(response) {
-        if(response.success) {
-            window.location = response.data.link;
-        }
-    }
-	});
-	
-	function imgrRequest(query) {
+		function imgrRequest(query) {
 			var link;
             
             $http({
@@ -390,4 +371,7 @@
                 });
             return link;
         }
+    }
+		
+	
 }());
