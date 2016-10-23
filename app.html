@@ -39,13 +39,20 @@
                 <div>
                     <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Tweet!</a>
                     
+					<a href = "http://www.facebook.com/dialog/feed?  
+								app_id=123050457758183&  
+								link=http://developers.facebook.com/docs/reference/dialogs/&
+								picture=http://fbrell.com/f8.jpg&  
+								name=Facebook%20Dialogs&  
+								caption=Your%20Personalized%20Gif& 
+								description=&
+								message=Check%20out%20my%20story!&
+								redirect_uri={{ctrl.imgurLink}}"> </a>
+					
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
-				<div class="fb-share-button"
-						data-href="{{ctrl.imgurLink}}" 
-						data-layout="button_count">
-					</div>
+				
             </div>
         </div>
         <div class="GIF">
