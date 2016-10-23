@@ -36,11 +36,11 @@
                     <button ng-click="ctrl.run()">Submit</button>
                 </span>
                 <div>
-                    <div class="fb-share-button" data-href="https://a-lxe.github.io/storeel/#/" data-layout="button"
-                         data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank"
-                                                                        href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fa-lxe.github.io%2Fstoreel%2F%23%2F&amp;src=sdkpreparse">Share</a>
-                    </div>
                     <a href="https://twitter.com/intent/tweet?url={{escape(ctrl.imgurLink)}}" class="twitter-share-button">Check out my story!</a>
+                    <div class="fb-share-button"
+						data-href="{{shareImgUrl}}" 
+						data-layout="button_count">
+					</div>
                     <div><a ng-click="ctrl.shareLink()" href="">Get link.</a></div>
                     <textarea id="holdtext" style="display:none"></textarea>
                 </div>
