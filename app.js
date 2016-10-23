@@ -31,6 +31,7 @@
         ctrl.shareLink = function () {
             window.prompt("Copy: Ctrl-C Enter", getShareLink());
         };
+        ctrl.facebookShare = facebookShare;
 
         if ($routeParams.text) {
             var inpObj = JSON.parse(unescape($routeParams.text));
@@ -399,6 +400,19 @@
                 function (error) {
                     console.log(error);
                 });
+        }
+
+        function facebookShare() {
+            FB.ui({
+                method: 'share',
+                name: 'Storeel',
+                href: getShareLink(),
+                picture: $rootScope.shareImgUrl,
+                caption: 'A visual story produced by Storeel',
+                description: 'Using Microsoft Cognitive APIs, Storeel takes textual stories, poetry, and 200-odd-character ' +
+                'ruminations into visual adventures in conjunction with the Bing Image Search API.',
+                message: 'Message you want to show'
+            });
         }
     }
 
