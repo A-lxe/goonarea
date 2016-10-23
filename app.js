@@ -256,7 +256,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square',
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&',
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
@@ -313,9 +313,12 @@
                         canvas.height = 300;
                         var context = canvas.getContext("2d");
                         for (var i = 0; i < imgs.length; i++) {
-                            console.log(imgs[i]);
-                            context.drawImage(imgs[i], 0, 0);
-                            console.log(encoder.addFrame(context));
+                            let img = imgs[i];
+                            context.fillStyle = "black";
+                            context.fillRect(0,0,300,300);
+                            context.rect(0,0,300,300);
+                            context.drawImage(img, (300 - img.width) / 2, (300 - img.height) / 2);
+                            encoder.addFrame(context);
                         }
                         encoder.finish();
                         console.log(encoder.stream().getData());

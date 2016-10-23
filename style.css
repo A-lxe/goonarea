@@ -33,5 +33,6 @@ body{
 }
 
 #image {
-
+	position: relative;
+	right:0;
 }
