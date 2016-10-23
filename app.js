@@ -13,9 +13,9 @@
                     controllerAs: "ctrl"
                 });
         })
-        .controller('StoryCtrl', ['$scope', '$http', '$q', '$routeParams', '$location', StoryCtrl]);
+        .controller('StoryCtrl', ['$scope', '$rootScope', '$http', '$q', '$routeParams', '$location', StoryCtrl]);
 
-    function StoryCtrl($scope, $http, $q, $routeParams, $location) {
+    function StoryCtrl($scope, $rootScope, $http, $q, $routeParams, $location) {
         var ctrl = this;
         ctrl.input = "";
         ctrl.currentInput = "";
@@ -24,6 +24,7 @@
         ctrl.memeMode = false;
         ctrl.storyMode = false;
         ctrl.gifReady = false;
+        ctrl.gifSpeed = 1000;
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
         ctrl.shareLink = function () {
@@ -306,7 +307,7 @@
                 var encoder = new GIFEncoder();
                 encoder.setSize(300, 300);
                 encoder.setRepeat(0);
-                encoder.setDelay(500);
+                encoder.setDelay(ctrl.gifSpeed);
                 encoder.start();
                 var imgs = [];
                 for (var i = 0; i < links.length; i++) {
