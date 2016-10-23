@@ -13,11 +13,12 @@
                     controllerAs: "ctrl"
                 });
         })
-        .controller('StoryCtrl', ['$scope', '$http', '$q', '$routeParams', StoryCtrl]);
+        .controller('StoryCtrl', ['$scope', '$http', '$q', '$routeParams', '$location', StoryCtrl]);
 
-    function StoryCtrl($scope, $http, $q, $routeParams) {
+    function StoryCtrl($scope, $http, $q, $routeParams, $location) {
         var ctrl = this;
         ctrl.input = "";
+        ctrl.currentInput = "";
         ctrl.sentenceModels = [];
         ctrl.advancedMode = false;
         ctrl.memeMode = false;
@@ -25,6 +26,9 @@
         ctrl.gifReady = false;
         ctrl.run = run;
         ctrl.makeGIF = createGIF;
+        ctrl.shareLink = function() {
+            alert(getShareLink());
+        };
 
         if ($routeParams.text) {
             console.log($routeParams.text)
@@ -44,11 +48,14 @@
             text = text + '.';
             text = text.replace(/(?:\r\n|\r|\n)/g, '. ');
             text = text.replace(/[^A-Za-z]+\.|;/g, '.');
+            ctrl.currentInput = text;
             ctrl.sentenceModels = parseStory(text);
             parse(text, ctrl.sentenceModels).then(
                 function (response) {
                     getQueries(ctrl.sentenceModels);
-                    getImages(ctrl.sentenceModels);
+                    getImages(ctrl.sentenceModels).then(function(response) {
+                        createGIF();
+                    });
                 }
             );
             console.log(ctrl.sentenceModels);
@@ -258,7 +265,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' +(ctrl.storyMode ? '&imageType=Clipart' : ""),
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' +(ctrl.storyMode ? '&imageType=Clipart' : ""),
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
@@ -330,6 +337,17 @@
                         });
                     }, 2000);
             }
+        }
+
+        function getShareLink() {
+            var link = $location.host() + "/#/";
+            link = link + ctrl.currentInput + "?";
+            link = link +
+                    "advancedMode=" + ctrl.advancedMode + "&" +
+                "memeMode=" + ctrl.memeMode + "&" +
+                "storyMode=" + ctrl.storyMode + "&" +
+                "advancedMode=" + ctrl.advancedMode;
+            return link;
         }
     }
 }());
