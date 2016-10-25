@@ -168,8 +168,8 @@
 							}
 							if(ctrl.nsfwMode)
 							{
-								console.log("YOOOOO");
-								q = q + " porn";
+								
+								//q = q + " porn";
 							}
                             queries.push(q);
 							
@@ -256,7 +256,7 @@
 
 							if(ctrl.nsfwMode){
 								
-								phrase = phrase + "porn";
+								//phrase = phrase + "porn";
 							}
                             queries.push(phrase);
                         }
@@ -299,7 +299,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : "") + (ctrl.nsfwMode ? '&safeSearch=Off' : ""),
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : ""),// + (ctrl.nsfwMode ? '&safeSearch=Off' : ""),
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
