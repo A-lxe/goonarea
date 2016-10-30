@@ -22,6 +22,7 @@
         ctrl.sentenceModels = [];
         ctrl.advancedMode = false;
         ctrl.memeMode = false;
+		ctrl.nsfwMode = false;
         ctrl.storyMode = false;
         ctrl.gifReady = false;
         ctrl.gifSpeed = 1000;
@@ -41,6 +42,7 @@
             ctrl.memeMode = inpObj.memeMode;
             ctrl.storyMode = inpObj.storyMode;
             ctrl.advancedMode = inpObj.advancedMode;
+			ctrl.nsfwMode = inpObj.nsfwMode;
             ctrl.run();
         }
 
@@ -160,7 +162,18 @@
                         }
 
                         if (q != "")
-                            queries.push((ctrl.memeMode ? q + " meme" : q));
+						{
+							if(ctrl.memeMode){
+								q = q+ " memes";
+							}
+							if(ctrl.nsfwMode)
+							{
+								
+								//q = q + " porn";
+							}
+                            queries.push(q);
+							
+						}
 
                     }
                     sModel.imageQueries = queries;
@@ -241,6 +254,10 @@
                                 phrase = phrase + "memes";
                             }
 
+							if(ctrl.nsfwMode){
+								
+								//phrase = phrase + "porn";
+							}
                             queries.push(phrase);
                         }
 
@@ -282,7 +299,7 @@
             var promise = $q.defer();
             $http({
                 method: 'GET',
-                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : ""),
+                url: 'https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=' + query + '&count=1&aspect=Square' + '&size=Medium' + (ctrl.storyMode ? '&imageType=Clipart' : ""),// + (ctrl.nsfwMode ? '&safeSearch=Off' : ""),
                 headers: {
                     'Ocp-Apim-Subscription-Key': '0556a03c473a4532b090905857709a02'
                 }
